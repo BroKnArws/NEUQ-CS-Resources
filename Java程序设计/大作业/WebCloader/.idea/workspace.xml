@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_TEST_SOURCES" value="false" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8835fd95-a293-4e87-8ea2-73988ebc5813" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="AnnotationType" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1dhNtMQdYc7cxCxXhVbU10tQGUb" />
+  <component name="ProjectViewState">
+    <option name="foldersAlwaysOnTop" value="false" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="sortByType" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.strutnut.webcloader.tar" />
+      <recent name="com.strutnut.webcloader" />
+      <recent name="com.boot" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.strutnut.annotation" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\projects\WebCloader\src\main\java\com\strutnut\webcloader" />
+      <recent name="D:\projects\WebCloader\src\main\java\com\strutnut" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.StartClient">
+    <configuration name="ClassPathDetector" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.strutnut.webcloader.ClassPathDetector" />
+      <module name="WebCloader" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.strutnut.webcloader.tar.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StartClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.strutnut.boot.StartClient" />
+      <module name="WebCloader" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.strutnut.webcloader.tar.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StartServer " type="Application" factoryName="Application" temporary="true">
+      <option name="MAIN_CLASS_NAME" value="com.strutnut.boot.StartServer" />
+      <module name="WebCloader" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.strutnut.webcloader.tar.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ClientTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="WebCloader" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.webcloader.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.webcloader" />
+      <option name="MAIN_CLASS_NAME" value="com.webcloader.ClientTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ClientTest.test02" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="WebCloader" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.webcloader.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.webcloader" />
+      <option name="MAIN_CLASS_NAME" value="com.webcloader.ClientTest" />
+      <option name="METHOD_NAME" value="test02" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.StartServer " />
+      <item itemvalue="Application.StartClient" />
+      <item itemvalue="Application.ClassPathDetector" />
+      <item itemvalue="JUnit.ClientTest" />
+      <item itemvalue="JUnit.ClientTest.test02" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.StartClient" />
+        <item itemvalue="Application.StartServer " />
+        <item itemvalue="JUnit.ClientTest.test02" />
+        <item itemvalue="Application.ClassPathDetector" />
+        <item itemvalue="JUnit.ClientTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8835fd95-a293-4e87-8ea2-73988ebc5813" name="Default Changelist" comment="" />
+      <created>1592873578698</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1592873578698</updated>
+      <workItem from="1592873582480" duration="126000" />
+      <workItem from="1592873756760" duration="2243000" />
+      <workItem from="1592907714963" duration="11559000" />
+      <workItem from="1592956875236" duration="10110000" />
+      <workItem from="1592978588321" duration="3337000" />
+      <workItem from="1593151680526" duration="3000" />
+      <workItem from="1593151704601" duration="21397000" />
+      <workItem from="1593217246494" duration="724000" />
+      <workItem from="1593218089778" duration="1373000" />
+      <workItem from="1593219530621" duration="902000" />
+      <workItem from="1593220469348" duration="3520000" />
+      <workItem from="1593225743485" duration="15617000" />
+      <workItem from="1593434333153" duration="608000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="361" y="69" key="#Project_Structure" timestamp="1593153093432">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="361" y="69" key="#Project_Structure/0.0.1536.821@0.0.1536.821" timestamp="1593153093432" />
+    <state x="223" y="65" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1592980647935">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="223" y="65" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.821@0.0.1536.821" timestamp="1592980647935" />
+    <state x="369" y="126" key="#com.intellij.ide.util.MemberChooser" timestamp="1593165685735">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="369" y="126" key="#com.intellij.ide.util.MemberChooser/0.0.1536.821@0.0.1536.821" timestamp="1593165685735" />
+    <state x="499" y="191" key="#com.intellij.ide.util.PackageChooserDialog" timestamp="1593247556757">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="499" y="191" key="#com.intellij.ide.util.PackageChooserDialog/0.0.1536.821@0.0.1536.821" timestamp="1593247556757" />
+    <state x="566" y="270" width="403" height="290" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1593247560832">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="566" y="270" width="403" height="290" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1536.821@0.0.1536.821" timestamp="1593247560832" />
+    <state x="421" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1593170532418">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="421" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1536.821@0.0.1536.821" timestamp="1593170532418" />
+    <state x="526" y="149" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1593240273973">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="526" y="149" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1536.821@0.0.1536.821" timestamp="1593240273973" />
+    <state x="530" y="0" key="Diagram.Print.Preview.Dialog" timestamp="1593223405008">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="530" y="0" key="Diagram.Print.Preview.Dialog/0.0.1536.821@0.0.1536.821" timestamp="1593223405008" />
+    <state x="548" y="165" key="FileChooserDialogImpl" timestamp="1593226436823">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="548" y="165" key="FileChooserDialogImpl/0.0.1536.821@0.0.1536.821" timestamp="1593226436823" />
+    <state width="1493" height="304" key="GridCell.Tab.0.bottom" timestamp="1593268882272">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.0.bottom/0.0.1536.821@0.0.1536.821" timestamp="1593268882272" />
+    <state width="1493" height="304" key="GridCell.Tab.0.center" timestamp="1593268882272">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.0.center/0.0.1536.821@0.0.1536.821" timestamp="1593268882272" />
+    <state width="1493" height="304" key="GridCell.Tab.0.left" timestamp="1593268882272">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.0.left/0.0.1536.821@0.0.1536.821" timestamp="1593268882272" />
+    <state width="1493" height="304" key="GridCell.Tab.0.right" timestamp="1593268882272">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.0.right/0.0.1536.821@0.0.1536.821" timestamp="1593268882272" />
+    <state width="1493" height="304" key="GridCell.Tab.1.bottom" timestamp="1593268882273">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.1.bottom/0.0.1536.821@0.0.1536.821" timestamp="1593268882273" />
+    <state width="1493" height="304" key="GridCell.Tab.1.center" timestamp="1593268882273">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.1.center/0.0.1536.821@0.0.1536.821" timestamp="1593268882273" />
+    <state width="1493" height="304" key="GridCell.Tab.1.left" timestamp="1593268882273">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.1.left/0.0.1536.821@0.0.1536.821" timestamp="1593268882273" />
+    <state width="1493" height="304" key="GridCell.Tab.1.right" timestamp="1593268882273">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.1.right/0.0.1536.821@0.0.1536.821" timestamp="1593268882273" />
+    <state width="1493" height="304" key="GridCell.Tab.2.bottom" timestamp="1593268882274">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.2.bottom/0.0.1536.821@0.0.1536.821" timestamp="1593268882274" />
+    <state width="1493" height="304" key="GridCell.Tab.2.center" timestamp="1593268882273">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.2.center/0.0.1536.821@0.0.1536.821" timestamp="1593268882273" />
+    <state width="1493" height="304" key="GridCell.Tab.2.left" timestamp="1593268882273">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.2.left/0.0.1536.821@0.0.1536.821" timestamp="1593268882273" />
+    <state width="1493" height="304" key="GridCell.Tab.2.right" timestamp="1593268882273">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state width="1493" height="304" key="GridCell.Tab.2.right/0.0.1536.821@0.0.1536.821" timestamp="1593268882273" />
+    <state x="317" y="145" key="IDE.errors.dialog" timestamp="1593222584579">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="317" y="145" key="IDE.errors.dialog/0.0.1536.821@0.0.1536.821" timestamp="1593222584579" />
+    <state x="299" y="65" key="Maven.ArtifactSearchDialog" timestamp="1592979079111">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="299" y="65" key="Maven.ArtifactSearchDialog/0.0.1536.821@0.0.1536.821" timestamp="1592979079111" />
+    <state x="321" y="54" width="981" height="709" key="SettingsEditor" timestamp="1593239996179">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="321" y="54" width="981" height="709" key="SettingsEditor/0.0.1536.821@0.0.1536.821" timestamp="1593239996179" />
+    <state x="93" y="93" width="1350" height="635" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1592959774389">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="93" y="93" width="1350" height="635" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.0.1536.821@0.0.1536.821" timestamp="1592959774389" />
+    <state x="0" y="0" width="170" height="100" key="net.trustx.simpleuml.components.BirdViewFrame" timestamp="1593220658542">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="0" y="0" width="170" height="100" key="net.trustx.simpleuml.components.BirdViewFrame/0.0.1536.821@0.0.1536.821" timestamp="1593220658542" />
+    <state x="209" y="112" key="new project wizard" timestamp="1593158771035">
+      <screen x="0" y="0" width="1536" height="821" />
+    </state>
+    <state x="209" y="112" key="new project wizard/0.0.1536.821@0.0.1536.821" timestamp="1593158771035" />
+  </component>
+  <component name="simpleUML.UMLToolWindowPlugin">
+    <General>
+      <option name="birdViewUpdateDelay" value="2000" />
+      <option name="knownFile0" value="file://$PROJECT_DIR$/../sss.suml" />
+      <option name="defaultFileLocation" value="file://$PROJECT_DIR$/.." />
+    </General>
+    <Classdiagram>
+      <option name="diagramTitleFont" value="SansSerif,1,12" />
+      <option name="diagramFont" value="SansSerif,0,10" />
+      <option name="defaultFieldsExpanded" value="false" />
+      <option name="defaultContructorsExpanded" value="false" />
+      <option name="defaultMethodsExpanded" value="false" />
+      <option name="showParameters" value="true" />
+      <option name="showTooltip" value="true" />
+      <option name="showReturnValues" value="true" />
+      <option name="longModifier" value="true" />
+      <option name="implementsBehaviour" value="1" />
+      <option name="extendsBehaviour" value="1" />
+      <option name="compartmentBehaviour" value="1" />
+      <option name="interfaceBackgroundColor" value="-6494306" />
+      <option name="abstractClassBackgroundColor" value="-1580132" />
+      <option name="classBackgroundColor" value="-6508057" />
+      <option name="diagramBackgroundColor" value="-1" />
+      <option name="useAntialiasedConnectors" value="true" />
+      <option name="quickSourceLinkColor" value="-16776961" />
+      <option name="quickDiagramLinkColor" value="-8454144" />
+      <option name="drawDecorations" value="false" />
+      <option name="hideFieldList" value="" />
+      <option name="showFieldList" value="" />
+      <option name="hideConstructorList" value="" />
+      <option name="showConstructorList" value="" />
+      <option name="hideMethodList" value="" />
+      <option name="showMethodList" value="" />
+      <option name="minimumFigureSize" value="0,0" />
+    </Classdiagram>
+    <Dependencydiagram>
+      <option name="diagramTitleFont" value="SansSerif,1,12" />
+      <option name="diagramFont" value="SansSerif,0,10" />
+      <option name="diagramBackgroundColor" value="-1" />
+      <option name="useAntialiasedConnectors" value="true" />
+      <option name="packageNameCompressionLevel" value="0" />
+    </Dependencydiagram>
+    <Packagediagram>
+      <option name="diagramTitleFont" value="SansSerif,0,12" />
+      <option name="diagramFont" value="SansSerif,0,10" />
+      <option name="packageBackgroundColor" value="-4144960" />
+      <option name="diagramBackgroundColor" value="-1" />
+      <option name="useAntialiasedConnectors" value="true" />
+      <option name="packageNameCompressionLevel" value="2" />
+    </Packagediagram>
+  </component>
+</project>

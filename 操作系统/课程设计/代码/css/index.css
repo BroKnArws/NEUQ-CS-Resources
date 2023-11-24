@@ -1,0 +1,44 @@
+* { color: #3d4150; }
+QPushButton { border-style: none;border: 1px solid #DCDFE6;border-radius: 6px;padding: 5px 10px;font-size: 13px; }
+QPushButton:hover { color: #ffffff; font-weight: bold; background-color: #fd839a; }
+QScrollBar:vertical { background:#f5f6f8; padding:0px; border-radius: 3px; width:6px; }
+QScrollBar::handle:vertical { background:#C0C4CC; border-radius: 3px; }
+QScrollBar::handle:vertical:hover { background:#909399; }
+QScrollBar::handle:vertical:pressed { background:#909399; }
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical, QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background:none; }
+QCheckBox, QRadioButton { font-size: 13px; }
+QComboBox, QLineEdit, QTextEdit, QTextBrowser, QTimeEdit, QDateEdit, QDateTimeEdit, QSpinBox,
+QDoubleSpinBox { background-color: #ffffff; border: 1px solid #DCDFE6; border-radius: 6px; padding: 5px 10px; font-size: 13px; }
+QTextEdit, QTextBrowser { padding-right: 3px; }
+QLineEdit:hover, QComboBox:hover, QTimeEdit:hover, QDateEdit:hover, QDateTimeEdit:hover, QSpinBox:hover, QDoubleSpinBox:hover { border: 1px solid #409EFF; }
+QComboBox::down-arrow { width:10px; height:10px; right:2px; image:url(:/icons/down.png); }
+QComboBox::drop-down { subcontrol-origin:padding; subcontrol-position:top right; width:15px; border-left-width:0px; border-left-style:solid; border-top-right-radius:3px; border-bottom-right-radius:3px; border-left-color:#242424; }
+QComboBox QAbstractItemView::item{ min-height:20px; min-width:10px; }
+QComboBox::drop-down:on{ top: 1px; }
+QTimeEdit::up-button, QDateEdit::up-button, QDateTimeEdit::up-button, QSpinBox::up-button, QDoubleSpinBox::up-button { width:10px; height:10px; image:url(:/icons/up.png); padding: 3px 8px 0px 0px; }
+QTimeEdit::down-button, QDateEdit::down-button, QDateTimeEdit::down-button, QSpinBox::down-button, QDoubleSpinBox::down-button { width:10px; height:10px; image:url(:/icons/down.png); padding: 0px 8px 3px 0px; }
+QTimeEdit::up-button:pressed, QDateEdit::up-button:pressed, QDateTimeEdit::up-button:pressed, QSpinBox::up-button:pressed, QDoubleSpinBox::up-button:pressed { top: -2px; }
+QTimeEdit::down-button:pressed, QDateEdit::down-button:pressed, QDateTimeEdit::down-button:pressed, QSpinBox::down-button:pressed, QDoubleSpinBox::down-button:pressed { bottom: -2px; }
+QTabWidget::pane{ border:1px solid #DCDFE6; border-radius: 6px; border-top-left-radius: 0px; background-color: #ffffff; selection-background-color:#ffffff; selection-color:#DCDFE6; alternate-background-color:#f2f1f5; gridline-color:#3d4150; }
+QTabBar::tab { border:1px solid #DCDFE6; border-top-left-radius: 6px; border-top-right-radius: 6px; font-size: 13px; background-color: #f2f1f5; padding: 2px 6px; }
+QTabWidget::pane:top { top:-1px; }
+QTabWidget::pane:bottom { bottom:-1px; }
+QTabWidget::pane:left { right:-1px; }
+QTabWidget::pane:right { left:-1px; }
+QTabBar::tab:selected { background-color: #ffffff; border-bottom: none; }
+QGroupBox { border: 1px solid #DCDFE6; border-radius: 6px; font-size: 13px; margin-top: 7px; }
+QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top center; padding: 0px 5px 3px; }
+#w_bg { background-color: #f2f1f5; border-radius: 22px; }
+#w_menu { background-color: #f8f8f8; border-radius: 16px; }
+#btn_menu_item_1, #btn_menu_item_2, #btn_menu_item_3, #btn_menu_item_4, #btn_menu_item_5, #btn_menu_item_6 { background-color: #ffffff; border-radius: 5px; padding: 12px 0 0; }
+#btn_menu_item_1:hover, #btn_menu_item_2:hover, #btn_menu_item_3:hover, #btn_menu_item_4:hover, #btn_menu_item_5:hover, #btn_menu_item_6:hover { background-color: #f8f8f8; border: 1px solid #f0f0f0; }
+#lab_title { padding: 0 10px; }
+#btn_main_item_1, #btn_main_item_2, #btn_main_item_3, #btn_main_item_4 { padding: 8px 12px; color: #909399; border: none; }
+#btn_main_item_1:hover, #btn_main_item_2:hover, #btn_main_item_3:hover, #btn_main_item_4:hover { background-color: #ffffff; border-radius: 15px; color: #3d4150; }
+#btn_mine, #btn_setting, #btn_home, #btn_littleshow, #btn_logout {  border: none; }
+#btn_mine:hover, #btn_setting:hover, #btn_home:hover, #btn_littleshow:hover, #btn_logout:hover { background-color: #eeeff4; border-radius: 10px; }
+#sw_main { background-color: #f8f8f8; border-radius: 16px; }
+#lab_mess_1, #lab_mess_2, #lab_mess_3, #lab_mess_4 { color: #C0C4CC; }
+#MyMessageBox QLabel { color: #3d4150; }
+#btn_mbox_btn01, #btn_mbox_btn02 { height: 16px; color: #fd839a; font-size: 14px; background-color: #f2f2f2; border: 1px solid #DCDFE6; border-radius: 13px; padding: 6px 20px; }
+#btn_mbox_btn01:hover, #btn_mbox_btn02:hover { color: #ffffff; font-weight: bold; background-color: #fd839a; }

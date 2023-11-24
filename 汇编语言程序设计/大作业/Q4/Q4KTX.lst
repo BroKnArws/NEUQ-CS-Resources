@@ -1,0 +1,764 @@
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:01:07
+tempfile.asm						     Page 1 - 1
+
+
+				;---------- 题 4 ---------------
+
+				;编写程序。从键盘输入多个带符号数：
+				;①统计负数的个数；
+				;②计算所有负数之和，并显示出十进制结果。
+
+				;---------- 示 例 --------------
+
+
+				;输入：34 -2 -3 -4 43
+				;输出：The Number Of Negative Numbers Is : 3
+				;      The Sum Of Negative Numbers Is : -9
+						
+
+				;输入:0 -200 -100 -50000 50000
+				;输出：The Number Of Negative Numbers Is : 3
+				;      The Sum Of Negative Numbers Is : -50300
+
+				;输入:0 200 100 50000 50000
+				;输出：The Number Of Negative Numbers Is : 0
+				;      The Sum Of Negative Numbers Is : 0
+
+				;输入: ab cd ef
+				;输出：Please Input Correct Synatax
+
+				;----------------------------
+
+ 0000				DATAS SEGMENT
+				    ;存放数字字符串，以$分割
+ 0000  0080 [				ARRAYSTR DB 128 DUP('$')
+        24
+       ]
+					;ARRAYSTR的实际最大下标
+ 0080 0000				PTRNUM DW 0
+ 0082 00			    NUM_OF_NEGA DB 0
+				    ;临时数字，用于暂存十进制数（无论正负）
+ 0083 0000			    TEMP DW 0
+				    ;是否是负数的标志
+ 0085 00			    SIGN DB 0
+				    ;负数的总和,上限65535
+ 0086 0000			    SUM DW 0
+ 0088 50 6C 65 61 73 65		    INPUT_INFO DB 'Please Input The Number List: $'
+       20 49 6E 70 75 74
+       20 54 68 65 20 4E
+       75 6D 62 65 72 20
+       4C 69 73 74 3A 20
+       24
+				    ;错误信息：请输入正确的格式
+ 00A7 50 6C 65 61 73 65		    WRONG_INFO DB 'Please Input Correct Synatax!$'
+       20 49 6E 70 75 74
+       20 43 6F 72 72 65
+       63 74 20 53 79 6E
+       61 74 61 78 21 24
+ 00C5 54 68 65 20 4E 75		    NUM_INFO DB 'The Number Of Negative Numbers Is : $'
+       6D 62 65 72 20 4F
+       66 20 4E 65 67 61
+       74 69 76 65 20 4E
+       75 6D 62 65 72 73
+       20 49 73 20 3A 20
+       24
+ 00EA 54 68 65 20 53 75		    SUM_INFO DB 'The Sum Of Negative Numbers Is : $'
+       6D 20 4F 66 20 4E
+       65 67 61 74 69 76
+       65 20 4E 75 6D 62
+       65 72 73 20 49 73
+       20 3A 20 24
+ 010C 4F 76 65 72 66 6C		    OVER_INFO DB 'Overflow! $'
+       6F 77 21 20 24
+ 0117 44 6F 20 59 6F 75		    TIPS_INFO DB 'Do You Want To Repeat Again ?[y/n] $'
+       20 57 61 6E 74 20
+       54 6F 20 52 65 70
+       65 61 74 20 41 67
+       61 69 6E 20 3F 5B
+       79 2F 6E 5D 20 24
+ 013B				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+ 0000				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+
+				;--------------------------------MACRO
+
+				;宏，输出字符
+				PRINTC MACRO STR
+					 PROTECT_STACK
+					 
+					 MOV AH,2
+					 MOV DL,STR
+					 INT 21H
+					 
+					 RECOVER_STACK
+				ENDM
+
+				;宏，输出字符串
+				PRINTS MACRO STR
+					 PROTECT_STACK
+					 PUSH DS
+					 
+					 MOV AX,SEG STR
+					 MOV DS,AX
+					 LEA DX,STR
+					 MOV AH,9
+					 INT 21H
+					 
+					 POP DS
+					 RECOVER_STACK
+				ENDM
+
+				;宏，保护现场
+				PROTECT_STACK MACRO
+					PUSH AX
+					PUSH BX
+					PUSH CX
+					PUSH DX
+				ENDM
+
+				;宏，现场恢复
+				RECOVER_STACK MACRO
+					POP DX
+					POP CX
+					POP BX
+					POP AX
+
+				ENDM
+
+				;宏，换行
+				NEXTLINE MACRO
+				    PRINTC 0AH
+				    PRINTC 0DH
+				ENDM
+
+				;宏 清屏
+				CLEAR_SCREEN MACRO
+
+					PROTECT_STACK
+					
+				    MOV AH,6
+					MOV AL,0
+					MOV BH,07H  ;黑底白字
+					MOV CH,0	;左上(0,0)
+					MOV CL,0
+					MOV DH,24
+					MOV DL,79	;右下(24,79)->25 * 80
+					INT 10H
+					;移动光标到开头
+					MOV AH,2
+					MOV DH,0
+					MOV DL,0
+					MOV BH,0
+					INT 10H
+					
+					RECOVER_STACK
+					
+				ENDM
+
+				;宏，退出程序
+				RTSYS MACRO
+					MOV AH,4CH
+					INT 21H
+					
+				ENDM
+
+				;宏，用于反复执行程序
+				DO_AGAIN MACRO
+				    LOCAL RESTART
+				    
+				    PRINTS TIPS_INFO
+					
+					MOV AH,1H
+					INT 21H
+					
+					CMP AL,0DH
+					JE RESTART
+					CMP AL,'y'
+					JE RESTART
+					CMP AL,'Y'
+					JE RESTART
+					RTSYS
+					
+				   RESTART:
+				    CLEAR_SCREEN
+				    JMP STARTS
+				    
+				ENDM
+
+
+				;宏，输出数字的十进制字符串
+				PRINT_NUM MACRO NUM
+				   
+				   LOCAL DO_ING
+				   LOCAL DO_END
+				   
+				   ;保护现场
+				   PROTECT_STACK
+				   
+				   MOV AX,WORD PTR NUM
+				   MOV DX,0
+				   MOV BX,10
+				   DO_ING:
+				    DIV BX
+				    ;余数入栈，商进入下一次循环
+				    PUSH DX
+				    MOV DX,0
+				    INC CX
+				    CMP AX,0
+				    JE DO_END
+				    JMP DO_ING
+				   ;按位输出
+				   DO_END:
+				    POP AX
+				    ADD AX,3030H
+				    PRINTC AL
+				    LOOP DO_END
+				    
+				    ;现场恢复
+				    RECOVER_STACK
+
+				ENDM
+
+				;-----------------------------START
+ 0000				   STARTS:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+				    
+				    ;重置数据
+ 0005  E8 023A			    CALL RESET_BEGIN
+				    
+				    PRINTS INPUT_INFO
+ 0008  50		     2		PUSH AX
+ 0009  53		     2		PUSH BX
+ 000A  51		     2		PUSH CX
+ 000B  52		     2		PUSH DX
+ 000C  1E		     1		 PUSH DS
+ 000D  B8 ---- R	     1		 MOV AX,SEG INPUT_INFO
+ 0010  8E D8		     1		 MOV DS,AX
+ 0012  8D 16 0088 R	     1		 LEA DX,INPUT_INFO
+ 0016  B4 09		     1		 MOV AH,9
+ 0018  CD 21		     1		 INT 21H
+ 001A  1F		     1		 POP DS
+ 001B  5A		     2		POP DX
+ 001C  59		     2		POP CX
+ 001D  5B		     2		POP BX
+ 001E  58		     2		POP AX
+				    
+				    ;先输入一串带符号数，空格作为分割，
+				    ;在存储单元中以'$'代替
+ 001F				    INPUT:
+ 001F  B4 01			     MOV AH,1
+ 0021  CD 21			     INT 21H
+				     
+				     ;是回车？
+ 0023  3C 0D			     CMP AL,0DH
+				     ;跳出循环
+ 0025  74 28			     JE TONUM
+				     
+				     ;是空格？
+ 0027  3C 20			     CMP AL,20H
+ 0029  75 03			     JNE ISNEGA
+				     ;分隔符
+ 002B  46			     INC SI
+ 002C  EB F1			     JMP INPUT
+				     
+				    ;是负号？
+ 002E				    ISNEGA:
+ 002E  3C 2D			     CMP AL,'-'
+ 0030  75 08			     JNE NOTNEGA
+ 0032  C6 84 0000 R 2D		     MOV ARRAYSTR[SI],'-'
+ 0037  46			     INC SI
+ 0038  EB E5			     JMP INPUT
+				    ;不是负号的情况下
+ 003A				    NOTNEGA:
+				     ;是0~9的数字？
+ 003A  3C 30			     CMP AL,'0'
+				     ;不是，报错  
+ 003C  73 03 E9 0151		     JB ERROR
+ 0041  3C 39			     CMP AL,'9'  
+ 0043  76 03 E9 014A		     JA ERROR
+ 0048  88 84 0000 R		     MOV ARRAYSTR[SI],AL
+ 004C  46			     INC SI
+ 004D  EB D0			     JMP INPUT
+				     
+				    ;所有负数相加，并统计负数个数
+ 004F				    TONUM:
+ 004F  89 36 0080 R		     MOV PTRNUM,SI
+				     ;数组下标
+ 0053  BE 0000			     MOV SI,0
+				     ;一个数字除符号外的位数
+ 0056  B9 0000			     MOV CX,0
+				     ;乘数
+ 0059  BB 0001			     MOV BX,1
+ 005C				    TONUMIN:
+				    
+				     ;如果数组下标已经大于PTRNUM，跳出
+ 005C  39 36 0080 R		     CMP PTRNUM,SI
+ 0060  72 4D			     JB PRINT_ALL
+				     
+ 0062  8A 84 0000 R		     MOV AL,ARRAYSTR[SI]
+ 0066  3C 24			     CMP AL,'$'
+ 0068  74 17     JE TOSUM
+ 006A  3C 2D			     CMP AL,'-'
+ 006C  74 07			     JE ADDNEGA
+				     ;是数字字符，入栈
+ 006E  B4 00			     MOV AH,0
+ 0070  50			     PUSH AX
+ 0071  46			     INC SI
+ 0072  41			     INC CX
+ 0073  EB E7			     JMP TONUMIN
+ 0075				    ADDNEGA:
+				     ;是负数
+ 0075  C6 06 0085 R 01		     MOV SIGN,1
+ 007A  FE 06 0082 R		     INC NUM_OF_NEGA
+ 007E  46			     INC SI
+ 007F  EB DB			     JMP TONUMIN
+ 0081				    TOSUM:
+				     ;从个位数出栈
+ 0081  58			     POP AX
+ 0082  2C 30			     SUB AL,30H
+ 0084  F7 E3			     MUL BX
+ 0086  01 06 0083 R		     ADD TEMP,AX
+ 008A  8B C3			     MOV AX,BX
+ 008C  BB 000A			     MOV BX,10
+ 008F  F7 E3			     MUL BX
+ 0091  8B D8			     MOV BX,AX
+ 0093  E2 EC			     LOOP TOSUM
+				     ;是负数吗？
+ 0095  80 3E 0085 R 01		     CMP SIGN,1
+ 009A  75 0D			     JNE TOSUMIN
+				     ;是负数，SUM+=TEMP，重置
+ 009C  A1 0083 R		     MOV AX,TEMP
+ 009F  01 06 0086 R		     ADD SUM,AX
+ 00A3  46			     INC SI
+ 00A4  E8 018C			     CALL RESET
+ 00A7  EB B3			     JMP TONUMIN
+				    ;不是负数，重置
+ 00A9				    TOSUMIN:
+ 00A9  46			     INC SI
+ 00AA  E8 0186			     CALL RESET
+ 00AD  EB AD			     JMP TONUMIN
+				     
+				    ;输出所有消息
+ 00AF				    PRINT_ALL:
+				    
+				     PRINTS NUM_INFO
+ 00AF  50		     2		PUSH AX
+ 00B0  53		     2		PUSH BX
+ 00B1  51		     2		PUSH CX
+ 00B2  52		     2		PUSH DX
+ 00B3  1E		     1		 PUSH DS
+ 00B4  B8 ---- R	     1		 MOV AX,SEG NUM_INFO
+ 00B7  8E D8		     1		 MOV DS,AX
+ 00B9  8D 16 00C5 R	     1		 LEA DX,NUM_INFO
+ 00BD  B4 09		     1		 MOV AH,9
+ 00BF  CD 21		     1		 INT 21H
+ 00C1  1F		     1		 POP DS
+ 00C2  5A		     2		POP DX
+ 00C3  59		     2		POP CX
+ 00C4  5B		     2		POP BX
+ 00C5  58		     2		POP AX
+				     PRINT_NUM NUM_OF_NEGA
+ 00C6  50		     2		PUSH AX
+ 00C7  53		     2		PUSH BX
+ 00C8  51		     2		PUSH CX
+ 00C9  52		     2		PUSH DX
+ 00CA  A1 0082 R	     1	   MOV AX,WORD PTR NUM_OF_NEGA
+ 00CD  BA 0000		     1	   MOV DX,0
+ 00D0  BB 000A		     1	   MOV BX,10
+ 00D3			     1	   ??0000:
+ 00D3  F7 F3		     1	    DIV BX
+ 00D5  52		     1	    PUSH DX
+ 00D6  BA 0000		     1	    MOV DX,0
+ 00D9  41		     1	    INC CX
+ 00DA  83 F8 00		     1	    CMP AX,0
+ 00DD  74 02		     1	    JE ??0001
+ 00DF  EB F2		     1	    JMP ??0000
+ 00E1			     1	   ??0001:
+ 00E1  58		     1	    POP AX
+ 00E2  05 3030		     1	    ADD AX,3030H
+ 00E5  50		     3		PUSH AX
+ 00E6  53		     3		PUSH BX
+ 00E7  51		     3		PUSH CX
+ 00E8  52		     3		PUSH DX
+ 00E9  B4 02		     2		 MOV AH,2
+ 00EB  8A D0		     2		 MOV DL,AL
+ 00ED  CD 21		     2		 INT 21H
+ 00EF  5A		     3		POP DX
+ 00F0  59		     3		POP CX
+ 00F1  5B		     3		POP BX
+ 00F2  58		     3		POP AX
+ 00F3  E2 EC		     1	    LOOP ??0001
+ 00F5  5A		     2		POP DX
+ 00F6  59		     2		POP CX
+ 00F7  5B		     2		POP BX
+ 00F8  58		     2		POP AX
+				     NEXTLINE
+ 00F9  50		     3		PUSH AX
+ 00FA  53		     3		PUSH BX
+ 00FB  51		     3		PUSH CX
+ 00FC  52		     3		PUSH DX
+ 00FD  B4 02		     2		 MOV AH,2
+ 00FF  B2 0A		     2		 MOV DL,0AH
+ 0101  CD 21		     2		 INT 21H
+ 0103  5A		     3		POP DX
+ 0104  59		     3		POP CX
+ 0105  5B		     3		POP BX
+ 0106  58		     3		POP AX
+ 0107  50		     3		PUSH AX
+ 0108  53		     3		PUSH BX
+ 0109  51		     3		PUSH CX
+ 010A  52		     3		PUSH DX
+ 010B  B4 02		     2		 MOV AH,2
+ 010D  B2 0D		     2		 MOV DL,0DH
+ 010F  CD 21		     2		 INT 21H
+ 0111  5A		     3		POP DX
+ 0112  59		     3		POP CX
+ 0113  5B		     3		POP BX
+ 0114  58		     3		POP AX
+				     
+				     PRINTS SUM_INFO
+ 0115  50		     2		PUSH AX
+ 0116  53		     2		PUSH BX
+ 0117  51		     2		PUSH CX
+ 0118  52		     2		PUSH DX
+ 0119  1E		     1		 PUSH DS
+ 011A  B8 ---- R	     1		 MOV AX,SEG SUM_INFO
+ 011D  8E D8		     1		 MOV DS,AX
+ 011F  8D 16 00EA R	     1		 LEA DX,SUM_INFO
+ 0123  B4 09		     1		 MOV AH,9
+ 0125  CD 21		     1		 INT 21H
+ 0127  1F		     1		 POP DS
+ 0128  5A		     2		POP DX
+ 0129  59		     2		POP CX
+ 012A  5B		     2		POP BX
+ 012B  58		     2		POP AX
+				     
+				     ;没有负数也就没必要打印符号
+ 012C  80 3E 0082 R 00		     CMP NUM_OF_NEGA,0
+ 0131  74 0E			     JE DO_NOT_PRINTN
+				     PRINTC '-'
+ 0133  50		     2		PUSH AX
+ 0134  53		     2		PUSH BX
+ 0135  51		     2		PUSH CX
+ 0136  52		     2		PUSH DX
+ 0137  B4 02		     1		 MOV AH,2
+ 0139  B2 2D		     1		 MOV DL,'-'
+ 013B  CD 21		     1		 INT 21H
+ 013D  5A		     2		POP DX
+ 013E  59		     2		POP CX
+ 013F  5B		     2		POP BX
+ 0140  58		     2		POP AX
+ 0141				    DO_NOT_PRINTN:
+				     PRINT_NUM SUM
+ 0141  50		     2		PUSH AX
+ 0142  53		     2		PUSH BX
+ 0143  51		     2		PUSH CX
+ 0144  52		     2		PUSH DX
+ 0145  A1 0086 R	     1	   MOV AX,WORD PTR SUM
+ 0148  BA 0000		     1	   MOV DX,0
+ 014B  BB 000A		     1	   MOV BX,10
+ 014E			     1	   ??0002:
+ 014E  F7 F3		     1	    DIV BX
+ 0150  52		     1	    PUSH DX
+ 0151  BA 0000		     1	    MOV DX,0
+ 0154  41		     1	    INC CX
+ 0155  83 F8 00		     1	    CMP AX,0
+ 0158  74 02		     1	    JE ??0003
+ 015A  EB F2		     1	    JMP ??0002
+ 015C			     1	   ??0003:
+ 015C  58		     1	    POP AX
+ 015D  05 3030		     1	    ADD AX,3030H
+ 0160  50		     3		PUSH AX
+ 0161  53		     3		PUSH BX
+ 0162  51		     3		PUSH CX
+ 0163  52		     3		PUSH DX
+ 0164  B4 02		     2		 MOV AH,2
+ 0166  8A D0		     2		 MOV DL,AL
+ 0168  CD 21		     2		 INT 21H
+ 016A  5A		     3		POP DX
+ 016B  59		     3		POP CX
+ 016C  5B		     3		POP BX
+ 016D  58		     3		POP AX
+ 016E  E2 EC		     1	    LOOP ??0003
+ 0170  5A		     2		POP DX
+ 0171  59		     2		POP CX
+ 0172  5B		     2		POP BX
+ 0173  58		     2		POP AX
+				     NEXTLINE
+ 0174  50		     3		PUSH AX
+ 0175  53		     3		PUSH BX
+ 0176  51		     3		PUSH CX
+ 0177  52		     3		PUSH DX
+ 0178  B4 02		     2		 MOV AH,2
+ 017A  B2 0A		     2		 MOV DL,0AH
+ 017C  CD 21		     2		 INT 21H
+ 017E  5A		     3		POP DX
+ 017F  59		     3		POP CX
+ 0180  5B		     3		POP BX
+ 0181  58		     3		POP AX
+ 0182  50		     3		PUSH AX
+ 0183  53		     3		PUSH BX
+ 0184  51		     3		PUSH CX
+ 0185  52		     3		PUSH DX
+ 0186  B4 02		     2		 MOV AH,2
+ 0188  B2 0D		     2		 MOV DL,0DH
+ 018A  CD 21		     2		 INT 21H
+ 018C  5A		     3		POP DX
+ 018D  59		     3		POP CX
+ 018E  5B		     3		POP BX
+ 018F  58		     3		POP AX
+				     
+ 0190  EB 51			     JMP LETE
+				    ;输出错误消息
+ 0192				    ERROR:
+				     NEXTLINE
+ 0192  50		     3		PUSH AX
+ 0193  53		     3		PUSH BX
+ 0194  51		     3		PUSH CX
+ 0195  52		     3		PUSH DX
+ 0196  B4 02		     2		 MOV AH,2
+ 0198  B2 0A		     2		 MOV DL,0AH
+ 019A  CD 21		     2		 INT 21H
+ 019C  5A		     3		POP DX
+ 019D  59		     3		POP CX
+ 019E  5B		     3		POP BX
+ 019F  58		     3		POP AX
+ 01A0  50		     3		PUSH AX
+ 01A1  53		     3		PUSH BX
+ 01A2  51		     3		PUSH CX
+ 01A3  52		     3		PUSH DX
+ 01A4  B4 02		     2		 MOV AH,2
+ 01A6  B2 0D		     2		 MOV DL,0DH
+ 01A8  CD 21		     2		 INT 21H
+ 01AA  5A		     3		POP DX
+ 01AB  59		     3		POP CX
+ 01AC  5B		     3		POP BX
+ 01AD  58		     3		POP AX
+				     PRINTS WRONG_INFO
+ 01AE  50		     2		PUSH AX
+ 01AF  53		     2		PUSH BX
+ 01B0  51		     2		PUSH CX
+ 01B1  52		     2		PUSH DX
+ 01B2  1E		     1		 PUSH DS
+ 01B3  B8 ---- R	     1		 MOV AX,SEG WRONG_INFO
+ 01B6  8E D8		     1		 MOV DS,AX
+ 01B8  8D 16 00A7 R	     1		 LEA DX,WRONG_INFO
+ 01BC  B4 09		     1		 MOV AH,9
+ 01BE  CD 21		     1		 INT 21H
+ 01C0  1F		     1		 POP DS
+ 01C1  5A		     2		POP DX
+ 01C2  59		     2		POP CX
+ 01C3  5B		     2		POP BX
+ 01C4  58		     2		POP AX
+				     NEXTLINE
+ 01C5  50		     3		PUSH AX
+ 01C6  53		     3		PUSH BX
+ 01C7  51		     3		PUSH CX
+ 01C8  52		     3		PUSH DX
+ 01C9  B4 02		     2		 MOV AH,2
+ 01CB  B2 0A		     2		 MOV DL,0AH
+ 01CD  CD 21		     2		 INT 21H
+ 01CF  5A		     3		POP DX
+ 01D0  59		     3		POP CX
+ 01D1  5B		     3		POP BX
+ 01D2  58		     3		POP AX
+ 01D3  50		     3		PUSH AX
+ 01D4  53		     3		PUSH BX
+ 01D5  51		     3		PUSH CX
+ 01D6  52		     3		PUSH DX
+ 01D7  B4 02		     2		 MOV AH,2
+ 01D9  B2 0D		     2		 MOV DL,0DH
+ 01DB  CD 21		     2		 INT 21H
+ 01DD  5A		     3		POP DX
+ 01DE  59		     3		POP CX
+ 01DF  5B		     3		POP BX
+ 01E0  58		     3		POP AX
+ 01E1  EB 00			     JMP LETE
+				     
+ 01E3				    LETE:
+				    
+				    DO_AGAIN
+ 01E3  50		     3		PUSH AX
+ 01E4  53		     3		PUSH BX
+ 01E5  51		     3		PUSH CX
+ 01E6  52		     3		PUSH DX
+ 01E7  1E		     2		 PUSH DS
+ 01E8  B8 ---- R	     2		 MOV AX,SEG TIPS_INFO
+ 01EB  8E D8		     2		 MOV DS,AX
+ 01ED  8D 16 0117 R	     2		 LEA DX,TIPS_INFO
+ 01F1  B4 09		     2		 MOV AH,9
+ 01F3  CD 21		     2		 INT 21H
+ 01F5  1F		     2		 POP DS
+ 01F6  5A		     3		POP DX
+ 01F7  59		     3		POP CX
+ 01F8  5B		     3		POP BX
+ 01F9  58		     3		POP AX
+ 01FA  B4 01		     1		MOV AH,1H
+ 01FC  CD 21		     1		INT 21H
+ 01FE  3C 0D		     1		CMP AL,0DH
+ 0200  74 0C		     1		JE ??0004
+ 0202  3C 79		     1		CMP AL,'y'
+ 0204  74 08		     1		JE ??0004
+ 0206  3C 59		     1		CMP AL,'Y'
+ 0208  74 04		     1		JE ??0004
+ 020A  B4 4C		     2		MOV AH,4CH
+ 020C  CD 21		     2		INT 21H
+ 020E			     1	   ??0004:
+ 020E  50		     3		PUSH AX
+ 020F  53		     3		PUSH BX
+ 0210  51		     3		PUSH CX
+ 0211  52		     3		PUSH DX
+ 0212  B4 06		     2	    MOV AH,6
+ 0214  B0 00		     2		MOV AL,0
+ 0216  B7 07		     2		MOV BH,07H  ;黑底白字
+ 0218  B5 00		     2		MOV CH,0	;左上(0,0)
+ 021A  B1 00		     2		MOV CL,0
+ 021C  B6 18		     2		MOV DH,24
+ 021E  B2 4F		     2		MOV DL,79	;右下(24,79)->25 * 80
+ 0220  CD 10		     2		INT 10H
+ 0222  B4 02		     2		MOV AH,2
+ 0224  B6 00		     2		MOV DH,0
+ 0226  B2 00		     2		MOV DL,0
+ 0228  B7 00		     2		MOV BH,0
+ 022A  CD 10		     2		INT 10H
+ 022C  5A		     3		POP DX
+ 022D  59		     3		POP CX
+ 022E  5B		     3		POP BX
+ 022F  58		     3		POP AX
+ 0230  E9 FDCD		     1	    JMP STARTS
+				    
+				;--------------------------------PROC
+
+				;重置相关信息
+ 0233				RESET PROC
+ 0233  C7 06 0083 R 0000		 MOV TEMP,0
+ 0239  BB 0001			     MOV BX,1
+ 023C  C6 06 0085 R 00		     MOV SIGN,0
+ 0241  C3			     RET
+ 0242				RESET ENDP 
+
+				;数据重置
+ 0242				RESET_BEGIN PROC
+
+ 0242  BE 0000				MOV SI,0
+ 0245  C7 06 0083 R 0000	    MOV TEMP,0
+ 024B  C7 06 0086 R 0000	    MOV SUM,0
+ 0251  C6 06 0082 R 00		    MOV NUM_OF_NEGA,0
+ 0256  B9 0080			    MOV CX,128
+ 0259				   RESET_CLEAR:
+ 0259  C6 84 0000 R 24		    MOV ARRAYSTR[SI],'$'
+ 025E  46			    INC SI
+ 025F  E2 F8			    LOOP RESET_CLEAR
+ 0261  BE 0000			    MOV SI,0
+ 0264  C3			    RET
+				    
+ 0265				RESET_BEGIN ENDP
+
+ 0265				CODES ENDS
+				    END START
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:01:07
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+CLEAR_SCREEN . . . . . . . . . .	Proc
+DO_AGAIN . . . . . . . . . . . .	Proc
+NEXTLINE . . . . . . . . . . . .	Proc
+PRINTC . . . . . . . . . . . . .	Proc
+PRINTS . . . . . . . . . . . . .	Proc
+PRINT_NUM  . . . . . . . . . . .	Proc
+PROTECT_STACK  . . . . . . . . .	Proc
+RECOVER_STACK  . . . . . . . . .	Proc
+RTSYS  . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0265	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 013B	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0000	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+RESET_BEGIN  . . . . . . . . . .	P Near	 0242	  CODES	Length= 0023 Public
+  RESET_CLEAR  . . . . . . . . .	L Near	 0259	  CODES	
+RESET  . . . . . . . . . . . . .	P Near	 0233	  CODES	Length= 000F Public
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+??0000 . . . . . . . . . . . . .	L Near	 00D3	  CODES	
+??0001 . . . . . . . . . . . . .	L Near	 00E1	  CODES	
+??0002 . . . . . . . . . . . . .	L Near	 014E	  CODES	
+??0003 . . . . . . . . . . . . .	L Near	 015C	  CODES	
+??0004 . . . . . . . . . . . . .	L Near	 020E	  CODES	
+ADDNEGA  . . . . . . . . . . . .	L Near	 0075	  CODES	
+ARRAYSTR . . . . . . . . . . . .	Byte	 0000	  DATAS	
+DO_NOT_PRINTN  . . . . . . . . .	L Near	 0141	  CODES	
+ERROR  . . . . . . . . . . . . .	L Near	 0192	  CODES	
+INPUT_INFO . . . . . . . . . . .	Byte	 0088	  DATAS	
+INPUT  . . . . . . . . . . . . .	L Near	 001F	  CODES	
+ISNEGA . . . . . . . . . . . . .	L Near	 002E	  CODES	
+LETE . . . . . . . . . . . . . .	L Near	 01E3	  CODES	
+NOTNEGA  . . . . . . . . . . . .	L Near	 003A	  CODES	
+NUM_INFO . . . . . . . . . . . .	Byte	 00C5	  DATAS	
+NUM_OF_NEGA  . . . . . . . . . .	Byte	 0082	  DATAS	
+OVER_INFO  . . . . . . . . . . .	Byte	 010C	  DATAS	
+PRINT_ALL  . . . . . . . . . . .	L Near	 00AF	  CODES	
+PTRNUM . . . . . . . . . . . . .	Word	 0080	  DATAS	
+SIGN . . . . . . . . . . . . . .	Byte	 0085	  DATAS	
+STARTS . . . . . . . . . . . . .	L Near	 0000	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+SUM_INFO . . . . . . . . . . . .	Byte	 00EA	  DATAS	
+SUM  . . . . . . . . . . . . . .	Word	 0086	  DATAS	
+TEMP . . . . . . . . . . . . . .	Word	 0083	  DATAS	
+TIPS_INFO  . . . . . . . . . . .	Byte	 0117	  DATAS	
+TONUMIN  . . . . . . . . . . . .	L Near	 005C	  CODES	
+TONUM  . . . . . . . . . . . . .	L Near	 004F	  CODES	
+TOSUMIN  . . . . . . . . . . . .	L Near	 00A9	  CODES	
+TOSUM  . . . . . . . . . . . . .	L Near	 0081	  CODES	
+WRONG_INFO . . . . . . . . . . .	Byte	 00A7	  DATAS	
+
+	   0 Warnings
+	   0 Errors

@@ -1,0 +1,63 @@
+CODES SEGMENT
+    ASSUME CS:CODES
+START:
+    
+    ;将80H号中断放入向量表中
+    LEA DX,OUTPUTSTART
+    MOV AX,SEG OUTPUTSTART
+    MOV DS,AX
+    MOV AL,80H
+    MOV AH,25H
+    INT 21H
+    
+    INT 80H
+    
+    ;中断驻留
+    MOV AH,31H
+    MOV AL,0
+    MOV DX,OUTPUTEND-OUTPUTSTART+16
+    
+    MOV AH,4CH
+    INT 21H
+    
+    ;中断程序
+    OUTPUTSTART:
+    JMP CODE
+    NUMBERS DB ' ',9,8,7,6,5,4,3,2,1
+    COLOR DB 3DH
+    CODE:
+    
+    ;现场保护
+    PUSH DS
+    PUSH DX
+    PUSH AX
+    PUSH CS
+    POP DS
+    
+    ;写显存
+	MOV BX,0B800H
+	MOV ES,BX
+	MOV BX,1
+	MOV CX,9  ;9个数字改变颜色
+	S:
+	MOV AH,2
+	MOV SI,CX
+	MOV DL,NUMBERS[SI]
+	ADD DL,30H
+	INT 21H
+	MOV AL,COLOR
+	ADD BYTE PTR ES:[BX],AL
+	ADD AL,3DH		;下一个字符变色
+	MOV COLOR,AL
+	ADD BX,2
+	LOOP S
+    
+    ;现场恢复
+    POP AX
+    POP DX
+    POP DS
+    IRET
+    OUTPUTEND:NOP
+CODES ENDS
+    END START
+

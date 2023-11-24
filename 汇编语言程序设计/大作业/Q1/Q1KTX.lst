@@ -1,0 +1,606 @@
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:00:25
+tempfile.asm						     Page 1 - 1
+
+
+				;---------- 题 1 ---------------
+
+				;编写程序。从键盘输入一个两位十进制数，
+				;输出其二进制结果。
+
+				;-----------------------------
+
+				;示例：
+
+				;输入：34
+				;输出：00100010
+
+				;输入:340
+				;输出:Only Two Digits Are Allowed
+
+				;输入:Q1
+				;输出：Not A Number
+
+				;----------------------------
+ 0000				DATAS SEGMENT
+					;字符串形式的十进制数字
+ 0000  0003 [			    NUMSTR DB 3 DUP(?)
+        00
+       ]
+				    ;防止NUMSTR过度填充
+ 0003  0020 [			    BUFF_USELESS DB 32 DUP(0)
+        00
+       ]
+ 0023 4E 6F 74 20 41 20		    WRONG_INFO DB 'Not A Number!$'
+       4E 75 6D 62 65 72
+       21 24
+ 0031 4F 6E 6C 79 20 54		    WRONG_INFO_OVER DB 'Only Two Digits Are Allowed!$'
+       77 6F 20 44 69 67
+       69 74 73 20 41 72
+       65 20 41 6C 6C 6F
+       77 65 64 21 24
+				    ;字符转数字的变量
+ 004E 00			    NUMBER DB 0
+ 004F 50 6C 65 61 73 65		    INPUT_INFO DB 'Please enter 2 decimal digits: $'
+       20 65 6E 74 65 72
+       20 32 20 64 65 63
+       69 6D 61 6C 20 64
+       69 67 69 74 73 3A
+       20 24
+ 006F 54 68 65 20 42 69		    OUTPUT_INFO DB 'The Binary number is: $'
+       6E 61 72 79 20 6E
+       75 6D 62 65 72 20
+       69 73 3A 20 24
+ 0086 44 6F 20 59 6F 75		    TIPS_INFO DB 'Do You Want To Repeat Again ?[y/n] $'
+       20 57 61 6E 74 20
+       54 6F 20 52 65 70
+       65 61 74 20 41 67
+       61 69 6E 20 3F 5B
+       79 2F 6E 5D 20 24
+ 00AA				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+					;存放二进制位数的堆栈
+ 0000  0010 [			    DW 16 DUP(?)
+        0000
+       ]
+ 0020				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+				;-----------------------------------MACRO
+
+				;宏，输出字符
+				PRINTC MACRO STR
+					 PROTECT_STACK
+					 
+					 MOV AH,2
+					 MOV DL,STR
+					 INT 21H
+					 
+					 RECOVER_STACK
+				ENDM
+
+				;宏，输出字符串
+				PRINTS MACRO STR
+					 PROTECT_STACK
+					 PUSH DS
+					 
+					 MOV AX,SEG STR
+					 MOV DS,AX
+					 LEA DX,STR
+					 MOV AH,9
+					 INT 21H
+					 
+					 POP DS
+					 RECOVER_STACK
+				ENDM
+
+				;宏，保护现场
+				PROTECT_STACK MACRO
+					PUSH AX
+					PUSH BX
+					PUSH CX
+					PUSH DX
+				ENDM
+
+				;宏，现场恢复
+				RECOVER_STACK MACRO
+					POP DX
+					POP CX
+					POP BX
+					POP AX
+
+				ENDM
+
+				;宏，换行
+				NEXTLINE MACRO
+				    PRINTC 0AH
+				    PRINTC 0DH
+				ENDM
+
+				;宏 清屏
+				CLEAR_SCREEN MACRO
+
+					PROTECT_STACK
+					
+				    MOV AH,6
+					MOV AL,0
+					MOV BH,07H  ;黑底白字
+					MOV CH,0	;左上(0,0)
+					MOV CL,0
+					MOV DH,24
+					MOV DL,79	;右下(24,79)->25 * 80
+					INT 10H
+					;移动光标到开头
+					MOV AH,2
+					MOV DH,0
+					MOV DL,0
+					MOV BH,0
+					INT 10H
+					
+					RECOVER_STACK
+					
+				ENDM
+
+				;宏，退出程序
+				RTSYS MACRO
+					MOV AH,4CH
+					INT 21H
+					
+				ENDM
+
+				;宏，用于反复执行程序
+				DO_AGAIN MACRO
+				    LOCAL RESTART
+				    
+				    PRINTS TIPS_INFO
+					
+					MOV AH,1H
+					INT 21H
+					
+					CMP AL,0DH
+					JE RESTART
+					CMP AL,'y'
+					JE RESTART
+					CMP AL,'Y'
+					JE RESTART
+					RTSYS
+					
+				   RESTART:
+				    CLEAR_SCREEN
+				    JMP STARTS
+				    
+				ENDM
+
+
+				;------------------------------------START
+ 0000				   STARTS:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+ 0005  B8 ---- R		    MOV AX,STACKS
+ 0008  8E D0			    MOV SS,AX
+				    
+				    ;数据重置
+ 000A  E8 01B8			    CALL RESET_BEGIN
+				    
+				    ;输出提示消息
+				    PRINTS INPUT_INFO
+ 000D  50		     2		PUSH AX
+ 000E  53		     2		PUSH BX
+ 000F  51		     2		PUSH CX
+ 0010  52		     2		PUSH DX
+ 0011  1E		     1		 PUSH DS
+ 0012  B8 ---- R	     1		 MOV AX,SEG INPUT_INFO
+ 0015  8E D8		     1		 MOV DS,AX
+ 0017  8D 16 004F R	     1		 LEA DX,INPUT_INFO
+ 001B  B4 09		     1		 MOV AH,9
+ 001D  CD 21		     1		 INT 21H
+ 001F  1F		     1		 POP DS
+ 0020  5A		     2		POP DX
+ 0021  59		     2		POP CX
+ 0022  5B		     2		POP BX
+ 0023  58		     2		POP AX
+				    
+				   ;输入2位以内十进制数字
+ 0024				   INPUT:
+ 0024  B4 01			    MOV AH,1
+ 0026  CD 21			    INT 21H
+ 0028  88 84 0000 R		    MOV NUMSTR[SI],AL
+ 002C  46			    INC SI
+ 002D  3C 0D			    CMP AL,0DH
+ 002F  75 F3			    JNE INPUT
+				    
+				    ;判断字符是否是数字,如果不是报错
+ 0031  E8 0152			    CALL JUDGE_IS_NUM
+				    
+				    ;转为十进制数字
+ 0034				    TOD:
+				     ;SI:1->2位
+ 0034  BE 0001			     MOV SI,1
+ 0037  B3 01			     MOV BL,1
+ 0039				    TODIN:
+ 0039  83 FE FF			     CMP SI,-1
+ 003C  74 1B			     JE TOB
+				     ;是个位数？
+ 003E  8A 84 0000 R		     MOV AL,NUMSTR[SI]
+ 0042  4E			     DEC SI
+ 0043  3C 0D			     CMP AL,0DH
+ 0045  74 F2			     JE TODIN
+				     ;逐位相乘
+ 0047  2C 30			     SUB AL,30H
+ 0049  F6 E3			     MUL BL
+ 004B  00 06 004E R		     ADD NUMBER,AL
+ 004F  8A C3			     MOV AL,BL
+ 0051  B7 0A			     MOV BH,10
+ 0053  F6 E7			     MUL BH
+ 0055  8A D8			     MOV BL,AL
+ 0057  EB E0			     JMP TODIN
+				     
+				    ;转为二进制
+ 0059				    TOB:
+ 0059  A0 004E R		     MOV AL,NUMBER
+ 005C  B9 0000			     MOV CX,0
+ 005F				    TOBIN:
+ 005F  B3 02			     MOV BL,2
+ 0061  3C 00			     CMP AL,0
+ 0063  74 0E			     JE FILL
+ 0065  B4 00			     MOV AH,0
+ 0067  F6 F3			     DIV BL
+ 0069  8A D8			     MOV BL,AL
+ 006B  B0 00			     MOV AL,0
+				     ;余数入栈，商进入下一次循环
+ 006D  50			     PUSH AX
+ 006E  41			     INC CX
+ 006F  8A C3			     MOV AL,BL
+ 0071  EB EC			     JMP TOBIN
+				    
+				    ;8位补足
+ 0073				    FILL:
+ 0073  BB 0008			     MOV BX,8
+ 0076  2B D9			     SUB BX,CX
+ 0078  8B CB			     MOV CX,BX
+ 007A				    FILLIN:
+ 007A  B8 0000			     MOV AX,0
+ 007D  50			     PUSH AX
+ 007E  E2 FA			     LOOP FILLIN
+				     
+				     ;输出提示信息
+				     PRINTS OUTPUT_INFO
+ 0080  50		     2		PUSH AX
+ 0081  53		     2		PUSH BX
+ 0082  51		     2		PUSH CX
+ 0083  52		     2		PUSH DX
+ 0084  1E		     1		 PUSH DS
+ 0085  B8 ---- R	     1		 MOV AX,SEG OUTPUT_INFO
+ 0088  8E D8		     1		 MOV DS,AX
+ 008A  8D 16 006F R	     1		 LEA DX,OUTPUT_INFO
+ 008E  B4 09		     1		 MOV AH,9
+ 0090  CD 21		     1		 INT 21H
+ 0092  1F		     1		 POP DS
+ 0093  5A		     2		POP DX
+ 0094  59		     2		POP CX
+ 0095  5B		     2		POP BX
+ 0096  58		     2		POP AX
+				     
+ 0097  B9 0008			     MOV CX,8
+				    ;弹出堆栈，输出各个余数
+ 009A				    SHOW:
+ 009A  58			     POP AX
+ 009B  8A D4			     MOV DL,AH
+ 009D  80 C2 30			     ADD DL,30H
+				     PRINTC DL
+ 00A0  50		     2		PUSH AX
+ 00A1  53		     2		PUSH BX
+ 00A2  51		     2		PUSH CX
+ 00A3  52		     2		PUSH DX
+ 00A4  B4 02		     1		 MOV AH,2
+ 00A6  8A D2		     1		 MOV DL,DL
+ 00A8  CD 21		     1		 INT 21H
+ 00AA  5A		     2		POP DX
+ 00AB  59		     2		POP CX
+ 00AC  5B		     2		POP BX
+ 00AD  58		     2		POP AX
+ 00AE  E2 EA			    LOOP SHOW
+				     NEXTLINE
+ 00B0  50		     3		PUSH AX
+ 00B1  53		     3		PUSH BX
+ 00B2  51		     3		PUSH CX
+ 00B3  52		     3		PUSH DX
+ 00B4  B4 02		     2		 MOV AH,2
+ 00B6  B2 0A		     2		 MOV DL,0AH
+ 00B8  CD 21		     2		 INT 21H
+ 00BA  5A		     3		POP DX
+ 00BB  59		     3		POP CX
+ 00BC  5B		     3		POP BX
+ 00BD  58		     3		POP AX
+ 00BE  50		     3		PUSH AX
+ 00BF  53		     3		PUSH BX
+ 00C0  51		     3		PUSH CX
+ 00C1  52		     3		PUSH DX
+ 00C2  B4 02		     2		 MOV AH,2
+ 00C4  B2 0D		     2		 MOV DL,0DH
+ 00C6  CD 21		     2		 INT 21H
+ 00C8  5A		     3		POP DX
+ 00C9  59		     3		POP CX
+ 00CA  5B		     3		POP BX
+ 00CB  58		     3		POP AX
+ 00CC  EB 68			     JMP LETEND
+				     
+				   ;非数字，输出错误信息
+ 00CE				   ERROR:
+				    PRINTS WRONG_INFO
+ 00CE  50		     2		PUSH AX
+ 00CF  53		     2		PUSH BX
+ 00D0  51		     2		PUSH CX
+ 00D1  52		     2		PUSH DX
+ 00D2  1E		     1		 PUSH DS
+ 00D3  B8 ---- R	     1		 MOV AX,SEG WRONG_INFO
+ 00D6  8E D8		     1		 MOV DS,AX
+ 00D8  8D 16 0023 R	     1		 LEA DX,WRONG_INFO
+ 00DC  B4 09		     1		 MOV AH,9
+ 00DE  CD 21		     1		 INT 21H
+ 00E0  1F		     1		 POP DS
+ 00E1  5A		     2		POP DX
+ 00E2  59		     2		POP CX
+ 00E3  5B		     2		POP BX
+ 00E4  58		     2		POP AX
+				    NEXTLINE
+ 00E5  50		     3		PUSH AX
+ 00E6  53		     3		PUSH BX
+ 00E7  51		     3		PUSH CX
+ 00E8  52		     3		PUSH DX
+ 00E9  B4 02		     2		 MOV AH,2
+ 00EB  B2 0A		     2		 MOV DL,0AH
+ 00ED  CD 21		     2		 INT 21H
+ 00EF  5A		     3		POP DX
+ 00F0  59		     3		POP CX
+ 00F1  5B		     3		POP BX
+ 00F2  58		     3		POP AX
+ 00F3  50		     3		PUSH AX
+ 00F4  53		     3		PUSH BX
+ 00F5  51		     3		PUSH CX
+ 00F6  52		     3		PUSH DX
+ 00F7  B4 02		     2		 MOV AH,2
+ 00F9  B2 0D		     2		 MOV DL,0DH
+ 00FB  CD 21		     2		 INT 21H
+ 00FD  5A		     3		POP DX
+ 00FE  59		     3		POP CX
+ 00FF  5B		     3		POP BX
+ 0100  58		     3		POP AX
+ 0101  EB 33			    JMP LETEND
+				   ;字符串长度大于2，报错
+ 0103				   ERROR_OVER:
+				    PRINTS WRONG_INFO_OVER
+ 0103  50		     2		PUSH AX
+ 0104  53		     2		PUSH BX
+ 0105  51		     2		PUSH CX
+ 0106  52		     2		PUSH DX
+ 0107  1E		     1		 PUSH DS
+ 0108  B8 ---- R	     1		 MOV AX,SEG WRONG_INFO_OVER
+ 010B  8E D8		     1		 MOV DS,AX
+ 010D  8D 16 0031 R	     1		 LEA DX,WRONG_INFO_OVER
+ 0111  B4 09		     1		 MOV AH,9
+ 0113  CD 21		     1		 INT 21H
+ 0115  1F		     1		 POP DS
+ 0116  5A		     2		POP DX
+ 0117  59		     2		POP CX
+ 0118  5B		     2		POP BX
+ 0119  58		     2		POP AX
+				    NEXTLINE
+ 011A  50		     3		PUSH AX
+ 011B  53		     3		PUSH BX
+ 011C  51		     3		PUSH CX
+ 011D  52		     3		PUSH DX
+ 011E  B4 02		     2		 MOV AH,2
+ 0120  B2 0A		     2		 MOV DL,0AH
+ 0122  CD 21		     2		 INT 21H
+ 0124  5A		     3		POP DX
+ 0125  59		     3		POP CX
+ 0126  5B		     3		POP BX
+ 0127  58		     3		POP AX
+ 0128  50		     3		PUSH AX
+ 0129  53		     3		PUSH BX
+ 012A  51		     3		PUSH CX
+ 012B  52		     3		PUSH DX
+ 012C  B4 02		     2		 MOV AH,2
+ 012E  B2 0D		     2		 MOV DL,0DH
+ 0130  CD 21		     2		 INT 21H
+ 0132  5A		     3		POP DX
+ 0133  59		     3		POP CX
+ 0134  5B		     3		POP BX
+ 0135  58		     3		POP AX
+				    
+				   ;重复程序
+ 0136				   LETEND: 
+				    DO_AGAIN
+ 0136  50		     3		PUSH AX
+ 0137  53		     3		PUSH BX
+ 0138  51		     3		PUSH CX
+ 0139  52		     3		PUSH DX
+ 013A  1E		     2		 PUSH DS
+ 013B  B8 ---- R	     2		 MOV AX,SEG TIPS_INFO
+ 013E  8E D8		     2		 MOV DS,AX
+ 0140  8D 16 0086 R	     2		 LEA DX,TIPS_INFO
+ 0144  B4 09		     2		 MOV AH,9
+ 0146  CD 21		     2		 INT 21H
+ 0148  1F		     2		 POP DS
+ 0149  5A		     3		POP DX
+ 014A  59		     3		POP CX
+ 014B  5B		     3		POP BX
+ 014C  58		     3		POP AX
+ 014D  B4 01		     1		MOV AH,1H
+ 014F  CD 21		     1		INT 21H
+ 0151  3C 0D		     1		CMP AL,0DH
+ 0153  74 0C		     1		JE ??0000
+ 0155  3C 79		     1		CMP AL,'y'
+ 0157  74 08		     1		JE ??0000
+ 0159  3C 59		     1		CMP AL,'Y'
+ 015B  74 04		     1		JE ??0000
+ 015D  B4 4C		     2		MOV AH,4CH
+ 015F  CD 21		     2		INT 21H
+ 0161			     1	   ??0000:
+ 0161  50		     3		PUSH AX
+ 0162  53		     3		PUSH BX
+ 0163  51		     3		PUSH CX
+ 0164  52		     3		PUSH DX
+ 0165  B4 06		     2	    MOV AH,6
+ 0167  B0 00		     2		MOV AL,0
+ 0169  B7 07		     2		MOV BH,07H  ;黑底白字
+ 016B  B5 00		     2		MOV CH,0	;左上(0,0)
+ 016D  B1 00		     2		MOV CL,0
+ 016F  B6 18		     2		MOV DH,24
+ 0171  B2 4F		     2		MOV DL,79	;右下(24,79)->25 * 80
+ 0173  CD 10		     2		INT 10H
+ 0175  B4 02		     2		MOV AH,2
+ 0177  B6 00		     2		MOV DH,0
+ 0179  B2 00		     2		MOV DL,0
+ 017B  B7 00		     2		MOV BH,0
+ 017D  CD 10		     2		INT 10H
+ 017F  5A		     3		POP DX
+ 0180  59		     3		POP CX
+ 0181  5B		     3		POP BX
+ 0182  58		     3		POP AX
+ 0183  E9 FE7A		     1	    JMP STARTS
+				;---------------------------------------PROC
+
+				 ;判断字符是否是数字,如果不是报错
+ 0186				JUDGE_IS_NUM PROC
+
+					PROTECT_STACK
+ 0186  50		     1		PUSH AX
+ 0187  53		     1		PUSH BX
+ 0188  51		     1		PUSH CX
+ 0189  52		     1		PUSH DX
+					
+					;只允许输入2位，否则直接报错
+ 018A  83 FE 03				CMP SI,3
+ 018D  76 03 E9 FF71			JA ERROR_OVER
+
+ 0192  BE 0000				MOV SI,0
+ 0195  B9 0002			    MOV CX,2
+ 0198				   JUDGE:
+ 0198  8A 84 0000 R		    MOV AL,NUMSTR[SI]
+ 019C  83 FE 00			    CMP SI,0
+ 019F  75 07			    JNE JUDGE_IN
+				    ;第一个字符是回车？
+ 01A1  3C 0D			    CMP AL,0DH
+ 01A3  75 03 E9 FF26		    JE ERROR
+ 01A8				   JUDGE_IN:
+ 01A8  46			    INC SI
+				    ;是回车？
+ 01A9  3C 0D			    CMP AL,0DH
+ 01AB  75 03 E9 FE84		    JE TOD
+				    ;是0~9的数字？
+ 01B0  3C 30			    CMP AL,'0'  
+ 01B2  73 03 E9 FF17		    JB ERROR
+ 01B7  3C 39			    CMP AL,'9'  
+ 01B9  76 03 E9 FF10		    JA ERROR
+ 01BE  E2 D8			    LOOP JUDGE
+				    
+				    RECOVER_STACK
+ 01C0  5A		     1		POP DX
+ 01C1  59		     1		POP CX
+ 01C2  5B		     1		POP BX
+ 01C3  58		     1		POP AX
+				    
+ 01C4  C3			    RET
+				    
+ 01C5				JUDGE_IS_NUM ENDP
+
+				;数据重置
+ 01C5				RESET_BEGIN PROC
+ 01C5  B8 0000			    MOV AX,0
+ 01C8  BE 0000			    MOV SI,0
+ 01CB  C6 06 004E R 00		    MOV NUMBER,0
+ 01D0  C3			    RET
+ 01D1				RESET_BEGIN ENDP
+
+ 01D1				CODES ENDS
+				    END START
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:00:25
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+CLEAR_SCREEN . . . . . . . . . .	Proc
+DO_AGAIN . . . . . . . . . . . .	Proc
+NEXTLINE . . . . . . . . . . . .	Proc
+PRINTC . . . . . . . . . . . . .	Proc
+PRINTS . . . . . . . . . . . . .	Proc
+PROTECT_STACK  . . . . . . . . .	Proc
+RECOVER_STACK  . . . . . . . . .	Proc
+RTSYS  . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 01D1	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 00AA	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0020	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+JUDGE_IS_NUM . . . . . . . . . .	P Near	 0186	  CODES	Length= 003F Public
+  JUDGE  . . . . . . . . . . . .	L Near	 0198	  CODES	
+  JUDGE_IN . . . . . . . . . . .	L Near	 01A8	  CODES	
+RESET_BEGIN  . . . . . . . . . .	P Near	 01C5	  CODES	Length= 000C Public
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+??0000 . . . . . . . . . . . . .	L Near	 0161	  CODES	
+BUFF_USELESS . . . . . . . . . .	Byte	 0003	  DATAS	
+ERROR_OVER . . . . . . . . . . .	L Near	 0103	  CODES	
+ERROR  . . . . . . . . . . . . .	L Near	 00CE	  CODES	
+FILLIN . . . . . . . . . . . . .	L Near	 007A	  CODES	
+FILL . . . . . . . . . . . . . .	L Near	 0073	  CODES	
+INPUT_INFO . . . . . . . . . . .	Byte	 004F	  DATAS	
+INPUT  . . . . . . . . . . . . .	L Near	 0024	  CODES	
+LETEND . . . . . . . . . . . . .	L Near	 0136	  CODES	
+NUMBER . . . . . . . . . . . . .	Byte	 004E	  DATAS	
+NUMSTR . . . . . . . . . . . . .	Byte	 0000	  DATAS	
+OUTPUT_INFO  . . . . . . . . . .	Byte	 006F	  DATAS	
+SHOW . . . . . . . . . . . . . .	L Near	 009A	  CODES	
+STARTS . . . . . . . . . . . . .	L Near	 0000	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+TIPS_INFO  . . . . . . . . . . .	Byte	 0086	  DATAS	
+TOBIN  . . . . . . . . . . . . .	L Near	 005F	  CODES	
+TOB  . . . . . . . . . . . . . .	L Near	 0059	  CODES	
+TODIN  . . . . . . . . . . . . .	L Near	 0039	  CODES	
+TOD  . . . . . . . . . . . . . .	L Near	 0034	  CODES	
+WRONG_INFO_OVER  . . . . . . . .	Byte	 0031	  DATAS	
+WRONG_INFO . . . . . . . . . . .	Byte	 0023	  DATAS	
+
+	   0 Warnings
+	   0 Errors

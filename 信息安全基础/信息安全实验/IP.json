@@ -1,0 +1,138 @@
+[
+  {
+    "_index": "packets-2021-05-30",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "\\Device\\NPF_{2282C007-D029-434F-A7B1-97F06C08C47D}",
+            "frame.interface_description": "WLAN"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "May 30, 2021 08:23:58.704733000 中国标准时间",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_epoch": "1622334238.704733000",
+          "frame.time_delta": "0.000000000",
+          "frame.time_delta_displayed": "0.000000000",
+          "frame.time_relative": "295.821614000",
+          "frame.number": "224350",
+          "frame.len": "1454",
+          "frame.cap_len": "1454",
+          "frame.marked": "1",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:tcp",
+          "frame.coloring_rule.name": "HTTP",
+          "frame.coloring_rule.string": "http || tcp.port == 80 || http2"
+        },
+        "eth": {
+          "eth.dst": "0c:54:15:d4:f1:70",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "IntelCor_d4:f1:70",
+            "eth.dst.oui": "807957",
+            "eth.dst.oui_resolved": "Intel Corporate",
+            "eth.addr": "0c:54:15:d4:f1:70",
+            "eth.addr_resolved": "IntelCor_d4:f1:70",
+            "eth.addr.oui": "807957",
+            "eth.addr.oui_resolved": "Intel Corporate",
+            "eth.dst.lg": "0",
+            "eth.lg": "0",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "9a:aa:e0:e4:4a:29",
+          "eth.src_tree": {
+            "eth.src_resolved": "9a:aa:e0:e4:4a:29",
+            "eth.src.oui": "10136288",
+            "eth.addr": "9a:aa:e0:e4:4a:29",
+            "eth.addr_resolved": "9a:aa:e0:e4:4a:29",
+            "eth.addr.oui": "10136288",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x00000800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x00000000",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "0"
+          },
+          "ip.len": "1440",
+          "ip.id": "0x00008a2e",
+          "ip.flags": "0x00000040",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "54",
+          "ip.proto": "6",
+          "ip.checksum": "0x00006a63",
+          "ip.checksum.status": "2",
+          "ip.src": "101.72.249.43",
+          "ip.addr": "101.72.249.43",
+          "ip.src_host": "101.72.249.43",
+          "ip.host": "101.72.249.43",
+          "ip.dst": "192.168.43.170",
+          "ip.addr": "192.168.43.170",
+          "ip.dst_host": "192.168.43.170",
+          "ip.host": "192.168.43.170"
+        },
+        "tcp": {
+          "tcp.srcport": "80",
+          "tcp.dstport": "54166",
+          "tcp.port": "80",
+          "tcp.port": "54166",
+          "tcp.stream": "444",
+          "tcp.len": "1400",
+          "tcp.seq": "3922121",
+          "tcp.seq_raw": "1803024252",
+          "tcp.nxtseq": "3923521",
+          "tcp.ack": "2190",
+          "tcp.ack_raw": "3114885180",
+          "tcp.hdr_len": "20",
+          "tcp.flags": "0x00000010",
+          "tcp.flags_tree": {
+            "tcp.flags.res": "0",
+            "tcp.flags.ns": "0",
+            "tcp.flags.cwr": "0",
+            "tcp.flags.ecn": "0",
+            "tcp.flags.urg": "0",
+            "tcp.flags.ack": "1",
+            "tcp.flags.push": "0",
+            "tcp.flags.reset": "0",
+            "tcp.flags.syn": "0",
+            "tcp.flags.fin": "0",
+            "tcp.flags.str": "·······A····"
+          },
+          "tcp.window_size_value": "590",
+          "tcp.window_size": "75520",
+          "tcp.window_size_scalefactor": "128",
+          "tcp.checksum": "0x0000c105",
+          "tcp.checksum.status": "2",
+          "tcp.urgent_pointer": "0",
+          "tcp.analysis": {
+            "tcp.analysis.initial_rtt": "0.178422000",
+            "tcp.analysis.bytes_in_flight": "16800",
+            "tcp.analysis.push_bytes_sent": "772800"
+          },
+          "Timestamps": {
+            "tcp.time_relative": "7.392632000",
+            "tcp.time_delta": "0.000000000"
+          },
+          "tcp.payload": "06:db:62:18:19:7b:19:3a:9a:3e:4b:bb:f0:56:79:cd:bc:eb:c9:a5:62:2d:b4:cf:25:7b:15:b6:8c:0a:5f:00:64:11:13:24:7a:49:95:f4:75:be:d5:44:16:ec:c7:66:3d:ae:fc:45:b3:cf:a5:df:98:a5:3f:79:c8:6a:e4:04:cc:0b:69:86:0a:ee:c5:0a:5d:6d:07:85:8a:bf:f0:73:4e:fb:24:bb:17:05:f0:c6:07:f9:e7:30:e6:14:19:09:3e:a8:63:de:81:77:ee:2f:4b:b7:ee:ff:68:08:70:4f:a8:1a:39:a3:96:9d:a1:c4:0a:61:38:ad:d0:a1:f3:4b:bc:95:af:71:1c:9e:64:8a:29:ba:7b:d2:cb:b4:52:8e:d3:08:76:a6:fc:0a:a2:7c:30:33:c2:18:2f:8d:e5:37:1e:42:4b:81:0b:dd:c6:35:5d:77:07:b9:cf:8b:43:b3:d0:11:e1:77:0a:d8:ae:a9:e1:ba:9d:58:dc:9a:c8:03:6f:f0:70:93:19:35:b0:87:e0:ab:14:30:54:79:ca:44:78:12:91:fe:77:f9:9b:2f:01:8f:0b:32:a9:fc:f4:fe:dc:e7:01:91:06:e9:84:fb:9b:cd:54:9e:d6:87:4a:c0:8d:b9:1d:35:37:ad:e1:08:e6:3c:67:34:45:da:57:93:b6:61:c5:95:39:e8:db:47:71:2d:e1:0b:8a:96:64:52:8d:75:e0:0c:f6:5d:e5:f5:5e:2f:10:4d:93:70:35:96:1b:b2:41:a9:05:3c:16:bb:d8:2b:eb:9d:03:7a:00:7a:e5:1a:98:ca:65:fe:13:a8:97:74:8b:0f:ed:d9:a5:db:ca:1e:59:6c:25:75:6c:f3:6d:df:bb:d2:cf:68:1d:e0:1d:bf:18:46:53:20:b2:5c:e9:6e:b1:28:9f:f0:ce:3e:ef:a8:98:89:a8:71:53:28:a0:ba:0d:ad:d7:32:61:12:16:b2:d7:28:e9:42:89:63:21:60:29:d2:72:d6:c3:4d:ba:ba:a3:75:a0:6b:ea:6d:d6:a9:f8:d2:fa:45:77:50:d6:5d:31:cc:94:0d:8e:e2:ce:d6:75:c6:07:7d:7d:96:e6:c9:e4:71:fc:bd:d7:3c:f8:b2:b9:82:7f:2e:45:3d:92:68:66:95:27:e5:41:cc:a8:ab:a2:f9:83:14:5d:99:71:9d:6e:96:d5:3a:93:32:bc:66:ad:44:d4:2c:55:c0:3f:67:c1:ec:23:00:04:00:db:bc:df:1b:b7:5f:4c:d1:bc:2b:cd:02:e3:6f:2b:e1:1c:08:4b:e5:7f:a5:97:3d:d6:22:f9:0a:6a:f3:96:27:6b:d3:b8:c5:82:bd:db:55:d0:b7:61:91:4e:4e:8c:a2:32:11:d7:fa:30:6f:0a:86:3e:0c:79:44:c2:66:49:00:1d:28:b0:66:ce:7b:d1:3b:9e:f0:59:ed:93:79:eb:6c:a4:ea:b9:80:68:3e:d9:a9:83:fc:45:ed:9a:dc:e8:a5:a2:c4:ea:65:c1:3b:c0:5a:7f:51:e1:02:ba:1a:ff:1f:42:0c:be:31:93:5e:bf:23:75:62:0c:3c:10:0d:c7:23:6e:cb:f1:13:72:f2:db:98:f8:37:2d:2f:43:99:e3:1d:fc:6a:79:8e:eb:fe:7c:bb:7e:41:6b:77:f6:93:f9:6e:75:be:6b:c8:c0:a8:b2:c0:2a:33:fd:db:b5:0f:3d:42:6d:9f:7d:15:43:c3:91:87:a2:81:a1:db:d4:13:35:01:64:f0:0c:8a:6e:51:93:cc:73:d5:51:e0:0a:ac:69:32:a8:17:bf:a5:ca:8f:81:0d:42:3d:fe:4e:18:56:48:d9:ea:3f:38:b7:be:2b:79:53:40:5c:ab:f2:6b:05:02:c1:5f:2c:0d:c9:48:92:26:a2:b0:a4:5a:c6:d8:d2:23:71:d9:48:c7:98:13:37:b0:db:c0:eb:d2:09:5c:dc:0c:9a:ed:86:1e:30:ef:8d:fc:aa:4c:dd:a8:0d:2b:c0:71:2c:1d:5b:2f:d9:6a:ad:bd:f3:24:e9:ca:e5:8f:aa:1b:7a:e4:69:08:49:a4:1c:01:cd:cf:ea:6f:0b:1c:96:b3:21:86:7c:0a:11:cc:1e:b4:83:e2:02:38:13:19:95:7a:2d:c5:8c:77:b4:61:d2:bb:9b:54:32:47:72:53:68:65:d2:33:c2:8a:72:69:20:fc:d6:07:46:d1:00:46:9e:ee:4d:98:e4:f5:08:81:b8:3d:ac:9b:42:51:cc:22:f4:d1:f3:a4:c5:1d:a3:ab:4b:69:cf:7e:a9:f1:7b:ad:1c:6d:ae:91:c4:52:3e:a3:c4:9d:4d:8d:c6:7a:6d:d5:d7:ab:c3:e9:71:6c:fb:65:af:e9:2b:b2:75:44:c1:8c:4f:98:63:9a:e9:57:21:6e:14:34:2e:88:83:57:37:6d:87:57:9b:7d:a6:c5:81:c3:8f:33:0c:e8:a9:b1:65:fe:29:33:74:bd:b8:1d:aa:d4:87:e3:97:96:86:cd:9e:8a:81:45:bf:da:1a:40:fb:e4:59:db:69:8d:0e:a4:60:6d:e8:ee:5f:2b:7b:b6:60:bc:90:f2:3f:84:54:83:48:21:0a:29:6a:db:67:90:70:b9:e6:28:66:f5:05:f9:95:11:06:15:ca:db:69:be:c4:ed:12:fe:bb:b8:f2:e1:e5:c1:62:75:e3:11:a9:75:ce:56:6e:ca:75:cd:97:2e:11:73:c5:a4:39:77:f4:22:62:0d:35:05:93:6e:98:45:f8:6a:97:81:58:c6:b6:9e:30:76:24:8a:11:56:21:55:e2:2c:14:14:6f:d0:ef:f3:1c:52:57:30:98:5e:29:6e:8e:f0:b3:e2:b9:73:7b:91:90:d9:a3:9e:67:b1:d1:4e:16:51:37:97:38:ba:b3:6e:9b:a5:f4:37:27:a3:ff:9a:c4:26:c8:08:fd:f0:a7:b8:5d:bb:cc:d3:bc:cc:a7:e9:7e:9b:e6:aa:50:6f:2c:8f:0b:7e:08:7d:d1:88:a9:80:23:6d:c1:59:c7:c0:ae:58:77:59:51:16:65:f8:59:74:30:dd:c1:71:24:bf:d2:3b:49:e9:58:00:86:ff:e2:56:5d:86:d9:11:99:f5:f2:bf:58:bd:08:ca:d8:23:4e:ee:5b:03:b3:c9:7a:ff:8d:e6:59:23:a6:ac:a0:4d:8c:a3:82:54:ea:6e:68:cc:26:ca:5b:7a:1b:be:ba:51:77:94:6d:9f:9d:6b:8a:31:a1:9c:7b:64:93:69:c4:ea:1e:e1:04:54:55:dd:a0:36:f8:a8:e1:cd:39:b0:ca:57:51:d7:ca:58:04:54:77:e3:d0:61:f1:41:76:df:41:8b:bc:5f:5e:aa:b5:f6:7a:65:d3:81:c7:e7:1f:fd:76:47:c7:25:68:53:f9:8d:0c:dc:36:76:00:4a:b5:23:bf:85:d1:33:9f:41:83:cf:0a:0c:88:6f:ea:64:38:0a:3d:55:bf:6e:e9:52:08:05:0d:ef:26:ae:11:7b:eb:39:1f:c4:04:16:d3:8f:47:f8:6e:b7:01:5f:a6:f4:1f:7e:4a:72:c8:8f:ea:52:a7:7a:82:8d:f2:92:88:a1:4a:6c:93:5e:34:ff:94:fa:aa:cc:ed:d3:ee:4d:1b:22:0b:13:a7:d4:06:26:a1:ca:c8:28:bd:ad:f0:6a:5e:a9:dc:e1:23:a3:20:76:21:9f:1e:55:8d",
+          "tcp.reassembled_in": "225070",
+          "tcp.segment_data": "06:db:62:18:19:7b:19:3a:9a:3e:4b:bb:f0:56:79:cd:bc:eb:c9:a5:62:2d:b4:cf:25:7b:15:b6:8c:0a:5f:00:64:11:13:24:7a:49:95:f4:75:be:d5:44:16:ec:c7:66:3d:ae:fc:45:b3:cf:a5:df:98:a5:3f:79:c8:6a:e4:04:cc:0b:69:86:0a:ee:c5:0a:5d:6d:07:85:8a:bf:f0:73:4e:fb:24:bb:17:05:f0:c6:07:f9:e7:30:e6:14:19:09:3e:a8:63:de:81:77:ee:2f:4b:b7:ee:ff:68:08:70:4f:a8:1a:39:a3:96:9d:a1:c4:0a:61:38:ad:d0:a1:f3:4b:bc:95:af:71:1c:9e:64:8a:29:ba:7b:d2:cb:b4:52:8e:d3:08:76:a6:fc:0a:a2:7c:30:33:c2:18:2f:8d:e5:37:1e:42:4b:81:0b:dd:c6:35:5d:77:07:b9:cf:8b:43:b3:d0:11:e1:77:0a:d8:ae:a9:e1:ba:9d:58:dc:9a:c8:03:6f:f0:70:93:19:35:b0:87:e0:ab:14:30:54:79:ca:44:78:12:91:fe:77:f9:9b:2f:01:8f:0b:32:a9:fc:f4:fe:dc:e7:01:91:06:e9:84:fb:9b:cd:54:9e:d6:87:4a:c0:8d:b9:1d:35:37:ad:e1:08:e6:3c:67:34:45:da:57:93:b6:61:c5:95:39:e8:db:47:71:2d:e1:0b:8a:96:64:52:8d:75:e0:0c:f6:5d:e5:f5:5e:2f:10:4d:93:70:35:96:1b:b2:41:a9:05:3c:16:bb:d8:2b:eb:9d:03:7a:00:7a:e5:1a:98:ca:65:fe:13:a8:97:74:8b:0f:ed:d9:a5:db:ca:1e:59:6c:25:75:6c:f3:6d:df:bb:d2:cf:68:1d:e0:1d:bf:18:46:53:20:b2:5c:e9:6e:b1:28:9f:f0:ce:3e:ef:a8:98:89:a8:71:53:28:a0:ba:0d:ad:d7:32:61:12:16:b2:d7:28:e9:42:89:63:21:60:29:d2:72:d6:c3:4d:ba:ba:a3:75:a0:6b:ea:6d:d6:a9:f8:d2:fa:45:77:50:d6:5d:31:cc:94:0d:8e:e2:ce:d6:75:c6:07:7d:7d:96:e6:c9:e4:71:fc:bd:d7:3c:f8:b2:b9:82:7f:2e:45:3d:92:68:66:95:27:e5:41:cc:a8:ab:a2:f9:83:14:5d:99:71:9d:6e:96:d5:3a:93:32:bc:66:ad:44:d4:2c:55:c0:3f:67:c1:ec:23:00:04:00:db:bc:df:1b:b7:5f:4c:d1:bc:2b:cd:02:e3:6f:2b:e1:1c:08:4b:e5:7f:a5:97:3d:d6:22:f9:0a:6a:f3:96:27:6b:d3:b8:c5:82:bd:db:55:d0:b7:61:91:4e:4e:8c:a2:32:11:d7:fa:30:6f:0a:86:3e:0c:79:44:c2:66:49:00:1d:28:b0:66:ce:7b:d1:3b:9e:f0:59:ed:93:79:eb:6c:a4:ea:b9:80:68:3e:d9:a9:83:fc:45:ed:9a:dc:e8:a5:a2:c4:ea:65:c1:3b:c0:5a:7f:51:e1:02:ba:1a:ff:1f:42:0c:be:31:93:5e:bf:23:75:62:0c:3c:10:0d:c7:23:6e:cb:f1:13:72:f2:db:98:f8:37:2d:2f:43:99:e3:1d:fc:6a:79:8e:eb:fe:7c:bb:7e:41:6b:77:f6:93:f9:6e:75:be:6b:c8:c0:a8:b2:c0:2a:33:fd:db:b5:0f:3d:42:6d:9f:7d:15:43:c3:91:87:a2:81:a1:db:d4:13:35:01:64:f0:0c:8a:6e:51:93:cc:73:d5:51:e0:0a:ac:69:32:a8:17:bf:a5:ca:8f:81:0d:42:3d:fe:4e:18:56:48:d9:ea:3f:38:b7:be:2b:79:53:40:5c:ab:f2:6b:05:02:c1:5f:2c:0d:c9:48:92:26:a2:b0:a4:5a:c6:d8:d2:23:71:d9:48:c7:98:13:37:b0:db:c0:eb:d2:09:5c:dc:0c:9a:ed:86:1e:30:ef:8d:fc:aa:4c:dd:a8:0d:2b:c0:71:2c:1d:5b:2f:d9:6a:ad:bd:f3:24:e9:ca:e5:8f:aa:1b:7a:e4:69:08:49:a4:1c:01:cd:cf:ea:6f:0b:1c:96:b3:21:86:7c:0a:11:cc:1e:b4:83:e2:02:38:13:19:95:7a:2d:c5:8c:77:b4:61:d2:bb:9b:54:32:47:72:53:68:65:d2:33:c2:8a:72:69:20:fc:d6:07:46:d1:00:46:9e:ee:4d:98:e4:f5:08:81:b8:3d:ac:9b:42:51:cc:22:f4:d1:f3:a4:c5:1d:a3:ab:4b:69:cf:7e:a9:f1:7b:ad:1c:6d:ae:91:c4:52:3e:a3:c4:9d:4d:8d:c6:7a:6d:d5:d7:ab:c3:e9:71:6c:fb:65:af:e9:2b:b2:75:44:c1:8c:4f:98:63:9a:e9:57:21:6e:14:34:2e:88:83:57:37:6d:87:57:9b:7d:a6:c5:81:c3:8f:33:0c:e8:a9:b1:65:fe:29:33:74:bd:b8:1d:aa:d4:87:e3:97:96:86:cd:9e:8a:81:45:bf:da:1a:40:fb:e4:59:db:69:8d:0e:a4:60:6d:e8:ee:5f:2b:7b:b6:60:bc:90:f2:3f:84:54:83:48:21:0a:29:6a:db:67:90:70:b9:e6:28:66:f5:05:f9:95:11:06:15:ca:db:69:be:c4:ed:12:fe:bb:b8:f2:e1:e5:c1:62:75:e3:11:a9:75:ce:56:6e:ca:75:cd:97:2e:11:73:c5:a4:39:77:f4:22:62:0d:35:05:93:6e:98:45:f8:6a:97:81:58:c6:b6:9e:30:76:24:8a:11:56:21:55:e2:2c:14:14:6f:d0:ef:f3:1c:52:57:30:98:5e:29:6e:8e:f0:b3:e2:b9:73:7b:91:90:d9:a3:9e:67:b1:d1:4e:16:51:37:97:38:ba:b3:6e:9b:a5:f4:37:27:a3:ff:9a:c4:26:c8:08:fd:f0:a7:b8:5d:bb:cc:d3:bc:cc:a7:e9:7e:9b:e6:aa:50:6f:2c:8f:0b:7e:08:7d:d1:88:a9:80:23:6d:c1:59:c7:c0:ae:58:77:59:51:16:65:f8:59:74:30:dd:c1:71:24:bf:d2:3b:49:e9:58:00:86:ff:e2:56:5d:86:d9:11:99:f5:f2:bf:58:bd:08:ca:d8:23:4e:ee:5b:03:b3:c9:7a:ff:8d:e6:59:23:a6:ac:a0:4d:8c:a3:82:54:ea:6e:68:cc:26:ca:5b:7a:1b:be:ba:51:77:94:6d:9f:9d:6b:8a:31:a1:9c:7b:64:93:69:c4:ea:1e:e1:04:54:55:dd:a0:36:f8:a8:e1:cd:39:b0:ca:57:51:d7:ca:58:04:54:77:e3:d0:61:f1:41:76:df:41:8b:bc:5f:5e:aa:b5:f6:7a:65:d3:81:c7:e7:1f:fd:76:47:c7:25:68:53:f9:8d:0c:dc:36:76:00:4a:b5:23:bf:85:d1:33:9f:41:83:cf:0a:0c:88:6f:ea:64:38:0a:3d:55:bf:6e:e9:52:08:05:0d:ef:26:ae:11:7b:eb:39:1f:c4:04:16:d3:8f:47:f8:6e:b7:01:5f:a6:f4:1f:7e:4a:72:c8:8f:ea:52:a7:7a:82:8d:f2:92:88:a1:4a:6c:93:5e:34:ff:94:fa:aa:cc:ed:d3:ee:4d:1b:22:0b:13:a7:d4:06:26:a1:ca:c8:28:bd:ad:f0:6a:5e:a9:dc:e1:23:a3:20:76:21:9f:1e:55:8d"
+        }
+      }
+    }
+  }
+]

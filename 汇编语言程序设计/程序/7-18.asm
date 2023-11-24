@@ -1,0 +1,37 @@
+DATAS SEGMENT
+    LIST DB 1,3,4,5,2,4,8
+    SUM DB 0  
+DATAS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+    CALL GETSUM
+    
+    MOV AH,4CH
+    INT 21H
+    
+    GETSUM PROC
+      PUSH AX
+      PUSH BX
+      MOV SI,0
+     LET0:
+      CMP SI,SUM-LIST
+      JE LET1
+      MOV AL,LIST[SI]
+      INC SI
+      MOV BL,SUM
+      ADD BL,AL
+      MOV SUM,BL
+      JMP LET0
+     LET1:
+      POP BX
+      POP AX
+      RET
+    GETSUM ENDP
+CODES ENDS
+    END START
+
+

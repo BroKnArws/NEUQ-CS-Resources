@@ -1,0 +1,465 @@
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:00:44
+tempfile.asm						     Page 1 - 1
+
+
+
+				;---------- 题 2 ---------------
+
+				;编写程序。从键盘输入一串字符，
+				;按照其ASCII码从大到小的顺序排列，
+				;并把排序后的结果显示出来。
+
+				;---------- 示 例 --------------
+
+				;输入：--==//..123044qwertyuiop
+				;输出：ywutrqpoie==443210//..--
+
+				;----------------------------
+ 0000				DATAS SEGMENT
+ 0000 50 6C 65 61 73 65		    INPUTINFO DB 'Please Input The String:$'
+       20 49 6E 70 75 74
+       20 54 68 65 20 53
+       74 72 69 6E 67 3A
+       24
+ 0019 41 66 74 65 72 20		    OUTPUTINFO DB 'After Sorted The Answer Is:$'
+       53 6F 72 74 65 64
+       20 54 68 65 20 41
+       6E 73 77 65 72 20
+       49 73 3A 24
+				    ;输入的字符串
+ 0035 40 00			    STRING DB 64,?,64 DUP('$')
+       0040 [
+        24
+       ]
+				    ;NUM=STRING[1]，获取实际输入个数
+ 0077 0000			    NUM DW 0
+ 0079 44 6F 20 59 6F 75		    TIPS_INFO DB 'Do You Want To Repeat Again ?[y/n] $'
+       20 57 61 6E 74 20
+       54 6F 20 52 65 70
+       65 61 74 20 41 67
+       61 69 6E 20 3F 5B
+       79 2F 6E 5D 20 24
+ 009D				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+ 0000  0020 [			    DW 32 DUP(?)
+        0000
+       ]
+ 0040				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+
+				;---------------------------------------MACRO
+
+				;宏，输出字符
+				PRINTC MACRO STR
+					 PROTECT_STACK
+					 
+					 MOV AH,2
+					 MOV DL,STR
+					 INT 21H
+					 
+					 RECOVER_STACK
+				ENDM
+
+				;宏，输出字符串
+				PRINTS MACRO STR
+					 PROTECT_STACK
+					 PUSH DS
+					 
+					 MOV AX,SEG STR
+					 MOV DS,AX
+					 LEA DX,STR
+					 MOV AH,9
+					 INT 21H
+					 
+					 POP DS
+					 RECOVER_STACK
+				ENDM
+
+				;宏，保护现场
+				PROTECT_STACK MACRO
+					PUSH AX
+					PUSH BX
+					PUSH CX
+					PUSH DX
+				ENDM
+
+				;宏，现场恢复
+				RECOVER_STACK MACRO
+					POP DX
+					POP CX
+					POP BX
+					POP AX
+
+				ENDM
+
+				;宏，换行
+				NEXTLINE MACRO
+				    PRINTC 0AH
+				    PRINTC 0DH
+				ENDM
+
+				;宏 清屏
+				CLEAR_SCREEN MACRO
+
+					PROTECT_STACK
+					
+				    MOV AH,6
+					MOV AL,0
+					MOV BH,07H  ;黑底白字
+					MOV CH,0	;左上(0,0)
+					MOV CL,0
+					MOV DH,24
+					MOV DL,79	;右下(24,79)->25 * 80
+					INT 10H
+					;移动光标到开头
+					MOV AH,2
+					MOV DH,0
+					MOV DL,0
+					MOV BH,0
+					INT 10H
+					
+					RECOVER_STACK
+					
+				ENDM
+
+				;宏，退出程序
+				RTSYS MACRO
+					MOV AH,4CH
+					INT 21H
+					
+				ENDM
+
+				;宏，用于反复执行程序
+				DO_AGAIN MACRO
+				    LOCAL RESTART
+				    
+				    PRINTS TIPS_INFO
+					
+					MOV AH,1H
+					INT 21H
+					
+					CMP AL,0DH
+					JE RESTART
+					CMP AL,'y'
+					JE RESTART
+					CMP AL,'Y'
+					JE RESTART
+					RTSYS
+					
+				   RESTART:
+				    CLEAR_SCREEN
+				    JMP STARTS
+				    
+				ENDM
+
+				;------------------------------------------START
+ 0000				   STARTS:
+ 0000  B8 ---- R		    MOV AX,DATAS
+ 0003  8E D8			    MOV DS,AX
+ 0005  B8 ---- R		    MOV AX,STACKS
+ 0008  8E D0			    MOV SS,AX
+				    
+				    ;数据重置
+ 000A  E8 0117			    CALL RESET_BEGIN
+				    
+				    ;输入提示
+				    PRINTS INPUTINFO
+ 000D  50		     2		PUSH AX
+ 000E  53		     2		PUSH BX
+ 000F  51		     2		PUSH CX
+ 0010  52		     2		PUSH DX
+ 0011  1E		     1		 PUSH DS
+ 0012  B8 ---- R	     1		 MOV AX,SEG INPUTINFO
+ 0015  8E D8		     1		 MOV DS,AX
+ 0017  8D 16 0000 R	     1		 LEA DX,INPUTINFO
+ 001B  B4 09		     1		 MOV AH,9
+ 001D  CD 21		     1		 INT 21H
+ 001F  1F		     1		 POP DS
+ 0020  5A		     2		POP DX
+ 0021  59		     2		POP CX
+ 0022  5B		     2		POP BX
+ 0023  58		     2		POP AX
+				    
+				    ;输入字符串
+ 0024  BE 0001			    MOV SI,1
+ 0027  8D 16 0035 R		    LEA DX,STRING
+ 002B  B4 0A			    MOV AH,10
+ 002D  CD 21			    INT 21H
+				    ;取字节个数
+ 002F  8A 84 0035 R		    MOV AL,STRING[SI]
+ 0033  B4 00			    MOV AH,0
+ 0035  A3 0077 R		    MOV NUM,AX
+				    
+				    ;调用冒泡排序
+ 0038  E8 00B6			    CALL SORT
+				    
+				    ;回车换行
+				    NEXTLINE
+ 003B  50		     3		PUSH AX
+ 003C  53		     3		PUSH BX
+ 003D  51		     3		PUSH CX
+ 003E  52		     3		PUSH DX
+ 003F  B4 02		     2		 MOV AH,2
+ 0041  B2 0A		     2		 MOV DL,0AH
+ 0043  CD 21		     2		 INT 21H
+ 0045  5A		     3		POP DX
+ 0046  59		     3		POP CX
+ 0047  5B		     3		POP BX
+ 0048  58		     3		POP AX
+ 0049  50		     3		PUSH AX
+ 004A  53		     3		PUSH BX
+ 004B  51		     3		PUSH CX
+ 004C  52		     3		PUSH DX
+ 004D  B4 02		     2		 MOV AH,2
+ 004F  B2 0D		     2		 MOV DL,0DH
+ 0051  CD 21		     2		 INT 21H
+ 0053  5A		     3		POP DX
+ 0054  59		     3		POP CX
+ 0055  5B		     3		POP BX
+ 0056  58		     3		POP AX
+				    ;输出提示
+				    PRINTS OUTPUTINFO
+ 0057  50		     2		PUSH AX
+ 0058  53		     2		PUSH BX
+ 0059  51		     2		PUSH CX
+ 005A  52		     2		PUSH DX
+ 005B  1E		     1		 PUSH DS
+ 005C  B8 ---- R	     1		 MOV AX,SEG OUTPUTINFO
+ 005F  8E D8		     1		 MOV DS,AX
+ 0061  8D 16 0019 R	     1		 LEA DX,OUTPUTINFO
+ 0065  B4 09		     1		 MOV AH,9
+ 0067  CD 21		     1		 INT 21H
+ 0069  1F		     1		 POP DS
+ 006A  5A		     2		POP DX
+ 006B  59		     2		POP CX
+ 006C  5B		     2		POP BX
+ 006D  58		     2		POP AX
+				    ;输出ASCII排序后的字符串
+				    PRINTS STRING[2]
+ 006E  50		     2		PUSH AX
+ 006F  53		     2		PUSH BX
+ 0070  51		     2		PUSH CX
+ 0071  52		     2		PUSH DX
+ 0072  1E		     1		 PUSH DS
+ 0073  B8 ---- R	     1		 MOV AX,SEG STRING[2]
+ 0076  8E D8		     1		 MOV DS,AX
+ 0078  8D 16 0037 R	     1		 LEA DX,STRING[2]
+ 007C  B4 09		     1		 MOV AH,9
+ 007E  CD 21		     1		 INT 21H
+ 0080  1F		     1		 POP DS
+ 0081  5A		     2		POP DX
+ 0082  59		     2		POP CX
+ 0083  5B		     2		POP BX
+ 0084  58		     2		POP AX
+				    NEXTLINE
+ 0085  50		     3		PUSH AX
+ 0086  53		     3		PUSH BX
+ 0087  51		     3		PUSH CX
+ 0088  52		     3		PUSH DX
+ 0089  B4 02		     2		 MOV AH,2
+ 008B  B2 0A		     2		 MOV DL,0AH
+ 008D  CD 21		     2		 INT 21H
+ 008F  5A		     3		POP DX
+ 0090  59		     3		POP CX
+ 0091  5B		     3		POP BX
+ 0092  58		     3		POP AX
+ 0093  50		     3		PUSH AX
+ 0094  53		     3		PUSH BX
+ 0095  51		     3		PUSH CX
+ 0096  52		     3		PUSH DX
+ 0097  B4 02		     2		 MOV AH,2
+ 0099  B2 0D		     2		 MOV DL,0DH
+ 009B  CD 21		     2		 INT 21H
+ 009D  5A		     3		POP DX
+ 009E  59		     3		POP CX
+ 009F  5B		     3		POP BX
+ 00A0  58		     3		POP AX
+				    
+				    DO_AGAIN
+ 00A1  50		     3		PUSH AX
+ 00A2  53		     3		PUSH BX
+ 00A3  51		     3		PUSH CX
+ 00A4  52		     3		PUSH DX
+ 00A5  1E		     2		 PUSH DS
+ 00A6  B8 ---- R	     2		 MOV AX,SEG TIPS_INFO
+ 00A9  8E D8		     2		 MOV DS,AX
+ 00AB  8D 16 0079 R	     2		 LEA DX,TIPS_INFO
+ 00AF  B4 09		     2		 MOV AH,9
+ 00B1  CD 21		     2		 INT 21H
+ 00B3  1F		     2		 POP DS
+ 00B4  5A		     3		POP DX
+ 00B5  59		     3		POP CX
+ 00B6  5B		     3		POP BX
+ 00B7  58		     3		POP AX
+ 00B8  B4 01		     1		MOV AH,1H
+ 00BA  CD 21		     1		INT 21H
+ 00BC  3C 0D		     1		CMP AL,0DH
+ 00BE  74 0C		     1		JE ??0000
+ 00C0  3C 79		     1		CMP AL,'y'
+ 00C2  74 08		     1		JE ??0000
+ 00C4  3C 59		     1		CMP AL,'Y'
+ 00C6  74 04		     1		JE ??0000
+ 00C8  B4 4C		     2		MOV AH,4CH
+ 00CA  CD 21		     2		INT 21H
+ 00CC			     1	   ??0000:
+ 00CC  50		     3		PUSH AX
+ 00CD  53		     3		PUSH BX
+ 00CE  51		     3		PUSH CX
+ 00CF  52		     3		PUSH DX
+ 00D0  B4 06		     2	    MOV AH,6
+ 00D2  B0 00		     2		MOV AL,0
+ 00D4  B7 07		     2		MOV BH,07H  ;黑底白字
+ 00D6  B5 00		     2		MOV CH,0	;左上(0,0)
+ 00D8  B1 00		     2		MOV CL,0
+ 00DA  B6 18		     2		MOV DH,24
+ 00DC  B2 4F		     2		MOV DL,79	;右下(24,79)->25 * 80
+ 00DE  CD 10		     2		INT 10H
+ 00E0  B4 02		     2		MOV AH,2
+ 00E2  B6 00		     2		MOV DH,0
+ 00E4  B2 00		     2		MOV DL,0
+ 00E6  B7 00		     2		MOV BH,0
+ 00E8  CD 10		     2		INT 10H
+ 00EA  5A		     3		POP DX
+ 00EB  59		     3		POP CX
+ 00EC  5B		     3		POP BX
+ 00ED  58		     3		POP AX
+ 00EE  E9 FF0F		     1	    JMP STARTS
+
+				;------------------------------------------------PROC
+
+				;开始冒泡排序
+ 00F1				SORT PROC
+
+ 00F1  83 3E 0077 R 01			 CMP NUM,1
+ 00F6  74 2B				 JE DO_END
+					 
+					 ;现场保护
+					 PROTECT_STACK
+ 00F8  50		     1		PUSH AX
+ 00F9  53		     1		PUSH BX
+ 00FA  51		     1		PUSH CX
+ 00FB  52		     1		PUSH DX
+					
+ 00FC  8B 0E 0077 R			 MOV CX,NUM
+					 ;CX-1趟
+ 0100  49				 DEC CX
+ 0101					LOOP1:
+ 0101  51				 PUSH CX
+ 0102  BE 0000				 MOV SI,0
+ 0105					LOOP2:
+ 0105  8A 84 0037 R			 MOV AL,STRING[2+SI]
+ 0109  3A 84 0038 R			 CMP AL,STRING[2+SI+1]
+					 ;逆序排序
+ 010D  7D 08				 JGE NEXT
+ 010F  86 84 0038 R			 XCHG AL,STRING[2+SI+1]
+ 0113  88 84 0037 R			 MOV STRING[2+SI],AL
+ 0117					NEXT:
+ 0117  83 C6 01				 ADD SI,1
+ 011A  E2 E9				 LOOP LOOP2
+ 011C  59				 POP CX
+ 011D  E2 E2				 LOOP LOOP1
+					 ;恢复现场
+					 RECOVER_STACK
+ 011F  5A		     1		POP DX
+ 0120  59		     1		POP CX
+ 0121  5B		     1		POP BX
+ 0122  58		     1		POP AX
+ 0123					DO_END:
+ 0123  C3				 RET
+ 0124				SORT ENDP
+
+				;数据重置
+ 0124				RESET_BEGIN PROC
+
+ 0124  B9 0040			    MOV CX,64
+ 0127  BE 0000			    MOV SI,0
+ 012A				   RESET:
+ 012A  C6 84 0035 R 24		    MOV STRING[SI],'$'
+ 012F  46			    INC SI
+ 0130  E2 F8			    LOOP RESET
+ 0132  C3			    RET
+				    
+ 0133				RESET_BEGIN ENDP
+
+ 0133				CODES ENDS
+				    END START
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:00:44
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+CLEAR_SCREEN . . . . . . . . . .	Proc
+DO_AGAIN . . . . . . . . . . . .	Proc
+NEXTLINE . . . . . . . . . . . .	Proc
+PRINTC . . . . . . . . . . . . .	Proc
+PRINTS . . . . . . . . . . . . .	Proc
+PROTECT_STACK  . . . . . . . . .	Proc
+RECOVER_STACK  . . . . . . . . .	Proc
+RTSYS  . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0133	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 009D	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0040	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+RESET_BEGIN  . . . . . . . . . .	P Near	 0124	  CODES	Length= 000F Public
+  RESET  . . . . . . . . . . . .	L Near	 012A	  CODES	
+SORT . . . . . . . . . . . . . .	P Near	 00F1	  CODES	Length= 0033 Public
+  LOOP1  . . . . . . . . . . . .	L Near	 0101	  CODES	
+  LOOP2  . . . . . . . . . . . .	L Near	 0105	  CODES	
+  NEXT . . . . . . . . . . . . .	L Near	 0117	  CODES	
+  DO_END . . . . . . . . . . . .	L Near	 0123	  CODES	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+??0000 . . . . . . . . . . . . .	L Near	 00CC	  CODES	
+INPUTINFO  . . . . . . . . . . .	Byte	 0000	  DATAS	
+NUM  . . . . . . . . . . . . . .	Word	 0077	  DATAS	
+OUTPUTINFO . . . . . . . . . . .	Byte	 0019	  DATAS	
+STARTS . . . . . . . . . . . . .	L Near	 0000	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+STRING . . . . . . . . . . . . .	Byte	 0035	  DATAS	
+TIPS_INFO  . . . . . . . . . . .	Byte	 0079	  DATAS	
+
+	   0 Warnings
+	   0 Errors

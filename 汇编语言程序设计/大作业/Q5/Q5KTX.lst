@@ -1,0 +1,1146 @@
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:01:20
+tempfile.asm						     Page 1 - 1
+
+
+				;---------- 题 5 ---------------
+
+				;读取系统时间的百分秒作为0—99之间的随机数，
+				;实现两个随机数的加、减、乘、除运算，
+				;并显示算式及计算结果。
+
+				;-----------------------------
+
+ 0000				DATAS SEGMENT
+				    ;MTIME：存放百分秒数值
+ 0000 0000			    MTIME_1 DW 0
+ 0002 0000			    MTIME_2 DW 0
+ 0004 54 68 65 20 46 72		    NUM_INFO_BEFORE DB 'The Frist Number Is : $'
+       69 73 74 20 4E 75
+       6D 62 65 72 20 49
+       73 20 3A 20 24
+ 001B 54 68 65 20 53 65		    NUM_INFO_AFTER DB 'The Second Number Is : $'
+       63 6F 6E 64 20 4E
+       75 6D 62 65 72 20
+       49 73 20 3A 20 24
+ 0033 4E 55 4D 31 20 2B		    ADD_INFO DB 'NUM1 + NUM2 = $'
+       20 4E 55 4D 32 20
+       3D 20 24
+ 0042 4E 55 4D 31 20 2D		    SUB_INFO DB 'NUM1 - NUM2 = $'
+       20 4E 55 4D 32 20
+       3D 20 24
+ 0051 4E 55 4D 31 20 2A		    MUL_INFO DB 'NUM1 * NUM2 = $'
+       20 4E 55 4D 32 20
+       3D 20 24
+ 0060 4E 55 4D 31 20 2F		    DIV_INFO DB 'NUM1 / NUM2 = $'
+       20 4E 55 4D 32 20
+       3D 20 24
+ 006F 20 2C 4D 4F 44 20		    MOD_INFO DB ' ,MOD = $'
+       3D 20 24
+ 0078 44 6F 20 59 6F 75		    TIPS_INFO DB 'Do You Want To Repeat Again ?[y/n] $'
+       20 57 61 6E 74 20
+       54 6F 20 52 65 70
+       65 61 74 20 41 67
+       61 69 6E 20 3F 5B
+       79 2F 6E 5D 20 24
+ 009C 0E			    DELAY_TIME DB 14
+ 009D				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+				    
+ 0000				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+
+				;-------------------------------------MACRO
+
+				;宏，输出字符
+				PRINTC MACRO STR
+					 PROTECT_STACK
+					 
+					 MOV AH,2
+					 MOV DL,STR
+					 INT 21H
+					 
+					 RECOVER_STACK
+				ENDM
+
+				;宏，输出字符串
+				PRINTS MACRO STR
+					 PROTECT_STACK
+					 PUSH DS
+					 
+					 MOV AX,SEG STR
+					 MOV DS,AX
+					 LEA DX,STR
+					 MOV AH,9
+					 INT 21H
+					 
+					 POP DS
+					 RECOVER_STACK
+				ENDM
+
+				PROTECT_STACK MACRO
+					PUSH AX
+					PUSH BX
+					PUSH CX
+					PUSH DX
+				ENDM
+
+				RECOVER_STACK MACRO
+					POP DX
+					POP CX
+					POP BX
+					POP AX
+
+				ENDM
+
+				;宏，换行
+				NEXTLINE MACRO
+				    PRINTC 0AH
+				    PRINTC 0DH
+				ENDM
+
+				;宏 清屏
+				CLEAR_SCREEN MACRO
+
+					PROTECT_STACK
+					
+				    MOV AH,6
+					MOV AL,0
+					MOV BH,07H  ;黑底白字
+					MOV CH,0	;左上(0,0)
+					MOV CL,0
+					MOV DH,24
+					MOV DL,79	;右下(24,79)->25 * 80
+					INT 10H
+					;移动光标到开头
+					MOV AH,2
+					MOV DH,0
+					MOV DL,0
+					MOV BH,0
+					INT 10H
+					
+					RECOVER_STACK
+					
+				ENDM
+
+				;宏，输出数字的十进制字符串
+				PRINT_NUMS MACRO NUM
+				   
+				   LOCAL DO_ING
+				   LOCAL DO_END
+				   
+				   ;保护现场
+				   PROTECT_STACK
+				   
+				   MOV AX,NUM
+				   MOV DX,0
+				   MOV CX,0
+				   MOV BX,10
+				   DO_ING:
+				    DIV BX
+				    ;余数入栈，商进入下一次循环
+				    PUSH DX
+				    MOV DX,0
+				    INC CX
+				    CMP AX,0
+				    JE DO_END
+				    JMP DO_ING
+				   ;按位输出
+				   DO_END:
+				    POP AX
+				    ADD AX,3030H
+				    PRINTC AL
+				    LOOP DO_END
+				    
+				    ;现场恢复
+				    RECOVER_STACK
+				ENDM
+
+				;宏，获取当前时间
+				GET_MTIME MACRO ARG,INFO
+
+					MOV AH,2CH		;DL->millsecond
+					INT 21H
+					MOV DH,0
+					MOV ARG,DX
+					
+					PRINTS INFO
+					PRINT_NUMS ARG
+					NEXTLINE
+					
+				ENDM
+
+				;宏，退出程序
+				RTSYS MACRO
+					MOV AH,4CH
+					INT 21H
+					
+				ENDM
+
+				;宏，反复执行程序
+				DO_AGAIN MACRO
+				    LOCAL RESTART
+				    
+				    PRINTS TIPS_INFO
+					
+					MOV AH,1H
+					INT 21H
+					
+					CMP AL,0DH
+					JE RESTART
+					CMP AL,'y'
+					JE RESTART
+					CMP AL,'Y'
+					JE RESTART
+					RTSYS
+					
+				   RESTART:
+				    CLEAR_SCREEN
+				    JMP STARTS
+				ENDM
+				;-------------------------------------------中断
+
+				;---除0(0号)的中断改写-----
+
+				;将00H号中断放入向量表中
+ 0000  8D 16 0018 R		    LEA DX,DIVIDE_START
+ 0004  B8 ---- R		    MOV AX,SEG DIVIDE_START
+ 0007  8E D8			    MOV DS,AX
+ 0009  B0 00			    MOV AL,00H
+ 000B  B4 25			    MOV AH,25H
+ 000D  CD 21			    INT 21H
+				    
+				    ;中断驻留
+ 000F  B4 31			    MOV AH,31H
+ 0011  B0 00			    MOV AL,0
+ 0013  BA 0075			    MOV DX,DIVIDE_END-DIVIDE_START+16
+				    
+ 0016  EB 66			    JMP STARTS
+				    
+				    ;中断程序
+ 0018				   DIVIDE_START:
+ 0018  EB 3F			    JMP CODE
+ 001A 30 20 43 61 6E 6E		    DIVIDE_ERROR DB '0 Cannot Be Used As A Divisor.So Please *RESTART* The Program.$'
+       6F 74 20 42 65 20
+       55 73 65 64 20 41
+       73 20 41 20 44 69
+       76 69 73 6F 72 2E
+       53 6F 20 50 6C 65
+       61 73 65 20 2A 52
+       45 53 54 41 52 54
+       2A 20 54 68 65 20
+       50 72 6F 67 72 61
+       6D 2E 24
+ 0059				   CODE:
+				   
+				    ;现场保护
+ 0059  1E			    PUSH DS
+ 005A  52			    PUSH DX
+ 005B  50			    PUSH AX
+ 005C  0E			    PUSH CS
+ 005D  1F			    POP DS
+				    
+				    PRINTS DIVIDE_ERROR  
+ 005E  50		     2		PUSH AX
+ 005F  53		     2		PUSH BX
+ 0060  51		     2		PUSH CX
+ 0061  52		     2		PUSH DX
+ 0062  1E		     1		 PUSH DS
+ 0063  B8 ---- R	     1		 MOV AX,SEG DIVIDE_ERROR
+ 0066  8E D8		     1		 MOV DS,AX
+ 0068  8D 16 001A R	     1		 LEA DX,DIVIDE_ERROR
+ 006C  B4 09		     1		 MOV AH,9
+ 006E  CD 21		     1		 INT 21H
+ 0070  1F		     1		 POP DS
+ 0071  5A		     2		POP DX
+ 0072  59		     2		POP CX
+ 0073  5B		     2		POP BX
+ 0074  58		     2		POP AX
+				    
+				    ;现场恢复
+ 0075  58			    POP AX
+ 0076  5A			    POP DX
+ 0077  1F			    POP DS
+				    
+				    ;回到界面
+ 0078  B8 4C00			    MOV AX,4C00H
+ 007B  CD 21			    INT 21H
+				    
+ 007D  90			    DIVIDE_END:NOP
+
+				;-------------------------------------------START
+ 007E				   STARTS:
+ 007E  B8 ---- R		    MOV AX,DATAS
+ 0081  8E D8			    MOV DS,AX
+					
+					;MTIME_1 = 当前百分秒
+					GET_MTIME MTIME_1,NUM_INFO_BEFORE
+ 0083  B4 2C		     1		MOV AH,2CH		;DL->millsecond
+ 0085  CD 21		     1		INT 21H
+ 0087  B6 00		     1		MOV DH,0
+ 0089  89 16 0000 R	     1		MOV MTIME_1,DX
+ 008D  50		     3		PUSH AX
+ 008E  53		     3		PUSH BX
+ 008F  51		     3		PUSH CX
+ 0090  52		     3		PUSH DX
+ 0091  1E		     2		 PUSH DS
+ 0092  B8 ---- R	     2		 MOV AX,SEG NUM_INFO_BEFORE
+ 0095  8E D8		     2		 MOV DS,AX
+ 0097  8D 16 0004 R	     2		 LEA DX,NUM_INFO_BEFORE
+ 009B  B4 09		     2		 MOV AH,9
+ 009D  CD 21		     2		 INT 21H
+ 009F  1F		     2		 POP DS
+ 00A0  5A		     3		POP DX
+ 00A1  59		     3		POP CX
+ 00A2  5B		     3		POP BX
+ 00A3  58		     3		POP AX
+ 00A4  50		     3		PUSH AX
+ 00A5  53		     3		PUSH BX
+ 00A6  51		     3		PUSH CX
+ 00A7  52		     3		PUSH DX
+ 00A8  A1 0000 R	     2	   MOV AX,MTIME_1
+ 00AB  BA 0000		     2	   MOV DX,0
+ 00AE  B9 0000		     2	   MOV CX,0
+ 00B1  BB 000A		     2	   MOV BX,10
+ 00B4			     2	   ??0000:
+ 00B4  F7 F3		     2	    DIV BX
+ 00B6  52		     2	    PUSH DX
+ 00B7  BA 0000		     2	    MOV DX,0
+ 00BA  41		     2	    INC CX
+ 00BB  83 F8 00		     2	    CMP AX,0
+ 00BE  74 02		     2	    JE ??0001
+ 00C0  EB F2		     2	    JMP ??0000
+ 00C2			     2	   ??0001:
+ 00C2  58		     2	    POP AX
+ 00C3  05 3030		     2	    ADD AX,3030H
+ 00C6  50		     4		PUSH AX
+ 00C7  53		     4		PUSH BX
+ 00C8  51		     4		PUSH CX
+ 00C9  52		     4		PUSH DX
+ 00CA  B4 02		     3		 MOV AH,2
+ 00CC  8A D0		     3		 MOV DL,AL
+ 00CE  CD 21		     3		 INT 21H
+ 00D0  5A		     4		POP DX
+ 00D1  59		     4		POP CX
+ 00D2  5B		     4		POP BX
+ 00D3  58		     4		POP AX
+ 00D4  E2 EC		     2	    LOOP ??0001
+ 00D6  5A		     3		POP DX
+ 00D7  59		     3		POP CX
+ 00D8  5B		     3		POP BX
+ 00D9  58		     3		POP AX
+ 00DA  50		     4		PUSH AX
+ 00DB  53		     4		PUSH BX
+ 00DC  51		     4		PUSH CX
+ 00DD  52		     4		PUSH DX
+ 00DE  B4 02		     3		 MOV AH,2
+ 00E0  B2 0A		     3		 MOV DL,0AH
+ 00E2  CD 21		     3		 INT 21H
+ 00E4  5A		     4		POP DX
+ 00E5  59		     4		POP CX
+ 00E6  5B		     4		POP BX
+ 00E7  58		     4		POP AX
+ 00E8  50		     4		PUSH AX
+ 00E9  53		     4		PUSH BX
+ 00EA  51		     4		PUSH CX
+ 00EB  52		     4		PUSH DX
+ 00EC  B4 02		     3		 MOV AH,2
+ 00EE  B2 0D		     3		 MOV DL,0DH
+ 00F0  CD 21		     3		 INT 21H
+ 00F2  5A		     4		POP DX
+ 00F3  59		     4		POP CX
+ 00F4  5B		     4		POP BX
+ 00F5  58		     4		POP AX
+					
+					;执行延时
+ 00F6  E8 0361				CALL DELAY
+					
+					;MTIME_1 = 延时后的百分秒
+					GET_MTIME MTIME_2,NUM_INFO_AFTER
+ 00F9  B4 2C		     1		MOV AH,2CH		;DL->millsecond
+ 00FB  CD 21		     1		INT 21H
+ 00FD  B6 00		     1		MOV DH,0
+ 00FF  89 16 0002 R	     1		MOV MTIME_2,DX
+ 0103  50		     3		PUSH AX
+ 0104  53		     3		PUSH BX
+ 0105  51		     3		PUSH CX
+ 0106  52		     3		PUSH DX
+ 0107  1E		     2		 PUSH DS
+ 0108  B8 ---- R	     2		 MOV AX,SEG NUM_INFO_AFTER
+ 010B  8E D8		     2		 MOV DS,AX
+ 010D  8D 16 001B R	     2		 LEA DX,NUM_INFO_AFTER
+ 0111  B4 09		     2		 MOV AH,9
+ 0113  CD 21		     2		 INT 21H
+ 0115  1F		     2		 POP DS
+ 0116  5A		     3		POP DX
+ 0117  59		     3		POP CX
+ 0118  5B		     3		POP BX
+ 0119  58		     3		POP AX
+ 011A  50		     3		PUSH AX
+ 011B  53		     3		PUSH BX
+ 011C  51		     3		PUSH CX
+ 011D  52		     3		PUSH DX
+ 011E  A1 0002 R	     2	   MOV AX,MTIME_2
+ 0121  BA 0000		     2	   MOV DX,0
+ 0124  B9 0000		     2	   MOV CX,0
+ 0127  BB 000A		     2	   MOV BX,10
+ 012A			     2	   ??0002:
+ 012A  F7 F3		     2	    DIV BX
+ 012C  52		     2	    PUSH DX
+ 012D  BA 0000		     2	    MOV DX,0
+ 0130  41		     2	    INC CX
+ 0131  83 F8 00		     2	    CMP AX,0
+ 0134  74 02		     2	    JE ??0003
+ 0136  EB F2		     2	    JMP ??0002
+ 0138			     2	   ??0003:
+ 0138  58		     2	    POP AX
+ 0139  05 3030		     2	    ADD AX,3030H
+ 013C  50		     4		PUSH AX
+ 013D  53		     4		PUSH BX
+ 013E  51		     4		PUSH CX
+ 013F  52		     4		PUSH DX
+ 0140  B4 02		     3		 MOV AH,2
+ 0142  8A D0		     3		 MOV DL,AL
+ 0144  CD 21		     3		 INT 21H
+ 0146  5A		     4		POP DX
+ 0147  59		     4		POP CX
+ 0148  5B		     4		POP BX
+ 0149  58		     4		POP AX
+ 014A  E2 EC		     2	    LOOP ??0003
+ 014C  5A		     3		POP DX
+ 014D  59		     3		POP CX
+ 014E  5B		     3		POP BX
+ 014F  58		     3		POP AX
+ 0150  50		     4		PUSH AX
+ 0151  53		     4		PUSH BX
+ 0152  51		     4		PUSH CX
+ 0153  52		     4		PUSH DX
+ 0154  B4 02		     3		 MOV AH,2
+ 0156  B2 0A		     3		 MOV DL,0AH
+ 0158  CD 21		     3		 INT 21H
+ 015A  5A		     4		POP DX
+ 015B  59		     4		POP CX
+ 015C  5B		     4		POP BX
+ 015D  58		     4		POP AX
+ 015E  50		     4		PUSH AX
+ 015F  53		     4		PUSH BX
+ 0160  51		     4		PUSH CX
+ 0161  52		     4		PUSH DX
+ 0162  B4 02		     3		 MOV AH,2
+ 0164  B2 0D		     3		 MOV DL,0DH
+ 0166  CD 21		     3		 INT 21H
+ 0168  5A		     4		POP DX
+ 0169  59		     4		POP CX
+ 016A  5B		     4		POP BX
+ 016B  58		     4		POP AX
+					
+					;加
+ 016C  E8 0059				CALL DO_ADD
+					
+					;减
+ 016F  E8 00C8				CALL DO_SUB
+					
+					;乘
+ 0172  E8 01B5				CALL DO_MUL
+					
+					;除
+ 0175  E8 0224				CALL DO_DIV
+					
+					;反复执行程序
+					DO_AGAIN
+ 0178  50		     3		PUSH AX
+ 0179  53		     3		PUSH BX
+ 017A  51		     3		PUSH CX
+ 017B  52		     3		PUSH DX
+ 017C  1E		     2		 PUSH DS
+ 017D  B8 ---- R	     2		 MOV AX,SEG TIPS_INFO
+ 0180  8E D8		     2		 MOV DS,AX
+ 0182  8D 16 0078 R	     2		 LEA DX,TIPS_INFO
+ 0186  B4 09		     2		 MOV AH,9
+ 0188  CD 21		     2		 INT 21H
+ 018A  1F		     2		 POP DS
+ 018B  5A		     3		POP DX
+ 018C  59		     3		POP CX
+ 018D  5B		     3		POP BX
+ 018E  58		     3		POP AX
+ 018F  B4 01		     1		MOV AH,1H
+ 0191  CD 21		     1		INT 21H
+ 0193  3C 0D		     1		CMP AL,0DH
+ 0195  74 0C		     1		JE ??0004
+ 0197  3C 79		     1		CMP AL,'y'
+ 0199  74 08		     1		JE ??0004
+ 019B  3C 59		     1		CMP AL,'Y'
+ 019D  74 04		     1		JE ??0004
+ 019F  B4 4C		     2		MOV AH,4CH
+ 01A1  CD 21		     2		INT 21H
+ 01A3			     1	   ??0004:
+ 01A3  50		     3		PUSH AX
+ 01A4  53		     3		PUSH BX
+ 01A5  51		     3		PUSH CX
+ 01A6  52		     3		PUSH DX
+ 01A7  B4 06		     2	    MOV AH,6
+ 01A9  B0 00		     2		MOV AL,0
+ 01AB  B7 07		     2		MOV BH,07H  ;黑底白字
+ 01AD  B5 00		     2		MOV CH,0	;左上(0,0)
+ 01AF  B1 00		     2		MOV CL,0
+ 01B1  B6 18		     2		MOV DH,24
+ 01B3  B2 4F		     2		MOV DL,79	;右下(24,79)->25 * 80
+ 01B5  CD 10		     2		INT 10H
+ 01B7  B4 02		     2		MOV AH,2
+ 01B9  B6 00		     2		MOV DH,0
+ 01BB  B2 00		     2		MOV DL,0
+ 01BD  B7 00		     2		MOV BH,0
+ 01BF  CD 10		     2		INT 10H
+ 01C1  5A		     3		POP DX
+ 01C2  59		     3		POP CX
+ 01C3  5B		     3		POP BX
+ 01C4  58		     3		POP AX
+ 01C5  E9 FEB6		     1	    JMP STARTS
+					
+				    
+				;----------------------------------------PROC
+					
+				;加法
+ 01C8				DO_ADD PROC
+
+ 01C8  A1 0000 R			MOV AX,MTIME_1
+ 01CB  8B 1E 0002 R			MOV BX,MTIME_2
+ 01CF  03 C3				ADD AX,BX
+					;打印相加结果
+					PRINTS ADD_INFO
+ 01D1  50		     2		PUSH AX
+ 01D2  53		     2		PUSH BX
+ 01D3  51		     2		PUSH CX
+ 01D4  52		     2		PUSH DX
+ 01D5  1E		     1		 PUSH DS
+ 01D6  B8 ---- R	     1		 MOV AX,SEG ADD_INFO
+ 01D9  8E D8		     1		 MOV DS,AX
+ 01DB  8D 16 0033 R	     1		 LEA DX,ADD_INFO
+ 01DF  B4 09		     1		 MOV AH,9
+ 01E1  CD 21		     1		 INT 21H
+ 01E3  1F		     1		 POP DS
+ 01E4  5A		     2		POP DX
+ 01E5  59		     2		POP CX
+ 01E6  5B		     2		POP BX
+ 01E7  58		     2		POP AX
+					PRINT_NUMS AX
+ 01E8  50		     2		PUSH AX
+ 01E9  53		     2		PUSH BX
+ 01EA  51		     2		PUSH CX
+ 01EB  52		     2		PUSH DX
+ 01EC  8B C0		     1	   MOV AX,AX
+ 01EE  BA 0000		     1	   MOV DX,0
+ 01F1  B9 0000		     1	   MOV CX,0
+ 01F4  BB 000A		     1	   MOV BX,10
+ 01F7			     1	   ??0005:
+ 01F7  F7 F3		     1	    DIV BX
+ 01F9  52		     1	    PUSH DX
+ 01FA  BA 0000		     1	    MOV DX,0
+ 01FD  41		     1	    INC CX
+ 01FE  83 F8 00		     1	    CMP AX,0
+ 0201  74 02		     1	    JE ??0006
+ 0203  EB F2		     1	    JMP ??0005
+ 0205			     1	   ??0006:
+ 0205  58		     1	    POP AX
+ 0206  05 3030		     1	    ADD AX,3030H
+ 0209  50		     3		PUSH AX
+ 020A  53		     3		PUSH BX
+ 020B  51		     3		PUSH CX
+ 020C  52		     3		PUSH DX
+ 020D  B4 02		     2		 MOV AH,2
+ 020F  8A D0		     2		 MOV DL,AL
+ 0211  CD 21		     2		 INT 21H
+ 0213  5A		     3		POP DX
+ 0214  59		     3		POP CX
+ 0215  5B		     3		POP BX
+ 0216  58		     3		POP AX
+ 0217  E2 EC		     1	    LOOP ??0006
+ 0219  5A		     2		POP DX
+ 021A  59		     2		POP CX
+ 021B  5B		     2		POP BX
+ 021C  58		     2		POP AX
+					NEXTLINE
+ 021D  50		     3		PUSH AX
+ 021E  53		     3		PUSH BX
+ 021F  51		     3		PUSH CX
+ 0220  52		     3		PUSH DX
+ 0221  B4 02		     2		 MOV AH,2
+ 0223  B2 0A		     2		 MOV DL,0AH
+ 0225  CD 21		     2		 INT 21H
+ 0227  5A		     3		POP DX
+ 0228  59		     3		POP CX
+ 0229  5B		     3		POP BX
+ 022A  58		     3		POP AX
+ 022B  50		     3		PUSH AX
+ 022C  53		     3		PUSH BX
+ 022D  51		     3		PUSH CX
+ 022E  52		     3		PUSH DX
+ 022F  B4 02		     2		 MOV AH,2
+ 0231  B2 0D		     2		 MOV DL,0DH
+ 0233  CD 21		     2		 INT 21H
+ 0235  5A		     3		POP DX
+ 0236  59		     3		POP CX
+ 0237  5B		     3		POP BX
+ 0238  58		     3		POP AX
+ 0239  C3				RET
+					
+ 023A				DO_ADD ENDP
+
+
+				;减法
+ 023A				DO_SUB PROC
+
+ 023A  A1 0000 R			MOV AX,MTIME_1
+ 023D  8B 1E 0002 R			MOV BX,MTIME_2
+ 0241  3B C3				CMP AX,BX
+ 0243  73 7A				JAE SUB_NN
+					;如果是负数先打印‘-’
+ 0245  93				XCHG AX,BX
+ 0246  2B C3				SUB AX,BX
+					PRINTS SUB_INFO
+ 0248  50		     2		PUSH AX
+ 0249  53		     2		PUSH BX
+ 024A  51		     2		PUSH CX
+ 024B  52		     2		PUSH DX
+ 024C  1E		     1		 PUSH DS
+ 024D  B8 ---- R	     1		 MOV AX,SEG SUB_INFO
+ 0250  8E D8		     1		 MOV DS,AX
+ 0252  8D 16 0042 R	     1		 LEA DX,SUB_INFO
+ 0256  B4 09		     1		 MOV AH,9
+ 0258  CD 21		     1		 INT 21H
+ 025A  1F		     1		 POP DS
+ 025B  5A		     2		POP DX
+ 025C  59		     2		POP CX
+ 025D  5B		     2		POP BX
+ 025E  58		     2		POP AX
+					PRINTC '-'
+ 025F  50		     2		PUSH AX
+ 0260  53		     2		PUSH BX
+ 0261  51		     2		PUSH CX
+ 0262  52		     2		PUSH DX
+ 0263  B4 02		     1		 MOV AH,2
+ 0265  B2 2D		     1		 MOV DL,'-'
+ 0267  CD 21		     1		 INT 21H
+ 0269  5A		     2		POP DX
+ 026A  59		     2		POP CX
+ 026B  5B		     2		POP BX
+ 026C  58		     2		POP AX
+					PRINT_NUMS AX
+ 026D  50		     2		PUSH AX
+ 026E  53		     2		PUSH BX
+ 026F  51		     2		PUSH CX
+ 0270  52		     2		PUSH DX
+ 0271  8B C0		     1	   MOV AX,AX
+ 0273  BA 0000		     1	   MOV DX,0
+ 0276  B9 0000		     1	   MOV CX,0
+ 0279  BB 000A		     1	   MOV BX,10
+ 027C			     1	   ??0007:
+ 027C  F7 F3		     1	    DIV BX
+ 027E  52		     1	    PUSH DX
+ 027F  BA 0000		     1	    MOV DX,0
+ 0282  41		     1	    INC CX
+ 0283  83 F8 00		     1	    CMP AX,0
+ 0286  74 02		     1	    JE ??0008
+ 0288  EB F2		     1	    JMP ??0007
+ 028A			     1	   ??0008:
+ 028A  58		     1	    POP AX
+ 028B  05 3030		     1	    ADD AX,3030H
+ 028E  50		     3		PUSH AX
+ 028F  53		     3		PUSH BX
+ 0290  51		     3		PUSH CX
+ 0291  52		     3		PUSH DX
+ 0292  B4 02		     2		 MOV AH,2
+ 0294  8A D0		     2		 MOV DL,AL
+ 0296  CD 21		     2		 INT 21H
+ 0298  5A		     3		POP DX
+ 0299  59		     3		POP CX
+ 029A  5B		     3		POP BX
+ 029B  58		     3		POP AX
+ 029C  E2 EC		     1	    LOOP ??0008
+ 029E  5A		     2		POP DX
+ 029F  59		     2		POP CX
+ 02A0  5B		     2		POP BX
+ 02A1  58		     2		POP AX
+					NEXTLINE
+ 02A2  50		     3		PUSH AX
+ 02A3  53		     3		PUSH BX
+ 02A4  51		     3		PUSH CX
+ 02A5  52		     3		PUSH DX
+ 02A6  B4 02		     2		 MOV AH,2
+ 02A8  B2 0A		     2		 MOV DL,0AH
+ 02AA  CD 21		     2		 INT 21H
+ 02AC  5A		     3		POP DX
+ 02AD  59		     3		POP CX
+ 02AE  5B		     3		POP BX
+ 02AF  58		     3		POP AX
+ 02B0  50		     3		PUSH AX
+ 02B1  53		     3		PUSH BX
+ 02B2  51		     3		PUSH CX
+ 02B3  52		     3		PUSH DX
+ 02B4  B4 02		     2		 MOV AH,2
+ 02B6  B2 0D		     2		 MOV DL,0DH
+ 02B8  CD 21		     2		 INT 21H
+ 02BA  5A		     3		POP DX
+ 02BB  59		     3		POP CX
+ 02BC  5B		     3		POP BX
+ 02BD  58		     3		POP AX
+ 02BE  C3				RET
+					;是正数直接打印
+ 02BF				   SUB_NN:
+ 02BF  2B C3			    SUB AX,BX
+					PRINTS SUB_INFO
+ 02C1  50		     2		PUSH AX
+ 02C2  53		     2		PUSH BX
+ 02C3  51		     2		PUSH CX
+ 02C4  52		     2		PUSH DX
+ 02C5  1E		     1		 PUSH DS
+ 02C6  B8 ---- R	     1		 MOV AX,SEG SUB_INFO
+ 02C9  8E D8		     1		 MOV DS,AX
+ 02CB  8D 16 0042 R	     1		 LEA DX,SUB_INFO
+ 02CF  B4 09		     1		 MOV AH,9
+ 02D1  CD 21		     1		 INT 21H
+ 02D3  1F		     1		 POP DS
+ 02D4  5A		     2		POP DX
+ 02D5  59		     2		POP CX
+ 02D6  5B		     2		POP BX
+ 02D7  58		     2		POP AX
+					PRINT_NUMS AX
+ 02D8  50		     2		PUSH AX
+ 02D9  53		     2		PUSH BX
+ 02DA  51		     2		PUSH CX
+ 02DB  52		     2		PUSH DX
+ 02DC  8B C0		     1	   MOV AX,AX
+ 02DE  BA 0000		     1	   MOV DX,0
+ 02E1  B9 0000		     1	   MOV CX,0
+ 02E4  BB 000A		     1	   MOV BX,10
+ 02E7			     1	   ??0009:
+ 02E7  F7 F3		     1	    DIV BX
+ 02E9  52		     1	    PUSH DX
+ 02EA  BA 0000		     1	    MOV DX,0
+ 02ED  41		     1	    INC CX
+ 02EE  83 F8 00		     1	    CMP AX,0
+ 02F1  74 02		     1	    JE ??000A
+ 02F3  EB F2		     1	    JMP ??0009
+ 02F5			     1	   ??000A:
+ 02F5  58		     1	    POP AX
+ 02F6  05 3030		     1	    ADD AX,3030H
+ 02F9  50		     3		PUSH AX
+ 02FA  53		     3		PUSH BX
+ 02FB  51		     3		PUSH CX
+ 02FC  52		     3		PUSH DX
+ 02FD  B4 02		     2		 MOV AH,2
+ 02FF  8A D0		     2		 MOV DL,AL
+ 0301  CD 21		     2		 INT 21H
+ 0303  5A		     3		POP DX
+ 0304  59		     3		POP CX
+ 0305  5B		     3		POP BX
+ 0306  58		     3		POP AX
+ 0307  E2 EC		     1	    LOOP ??000A
+ 0309  5A		     2		POP DX
+ 030A  59		     2		POP CX
+ 030B  5B		     2		POP BX
+ 030C  58		     2		POP AX
+					NEXTLINE
+ 030D  50		     3		PUSH AX
+ 030E  53		     3		PUSH BX
+ 030F  51		     3		PUSH CX
+ 0310  52		     3		PUSH DX
+ 0311  B4 02		     2		 MOV AH,2
+ 0313  B2 0A		     2		 MOV DL,0AH
+ 0315  CD 21		     2		 INT 21H
+ 0317  5A		     3		POP DX
+ 0318  59		     3		POP CX
+ 0319  5B		     3		POP BX
+ 031A  58		     3		POP AX
+ 031B  50		     3		PUSH AX
+ 031C  53		     3		PUSH BX
+ 031D  51		     3		PUSH CX
+ 031E  52		     3		PUSH DX
+ 031F  B4 02		     2		 MOV AH,2
+ 0321  B2 0D		     2		 MOV DL,0DH
+ 0323  CD 21		     2		 INT 21H
+ 0325  5A		     3		POP DX
+ 0326  59		     3		POP CX
+ 0327  5B		     3		POP BX
+ 0328  58		     3		POP AX
+ 0329  C3				RET
+					
+ 032A				DO_SUB ENDP
+					
+				;乘法
+ 032A				DO_MUL PROC
+ 032A  A1 0000 R			MOV AX,MTIME_1
+ 032D  8B 1E 0002 R			MOV BX,MTIME_2
+ 0331  F7 E3				MUL BX
+					;打印相乘结果
+					PRINTS MUL_INFO
+ 0333  50		     2		PUSH AX
+ 0334  53		     2		PUSH BX
+ 0335  51		     2		PUSH CX
+ 0336  52		     2		PUSH DX
+ 0337  1E		     1		 PUSH DS
+ 0338  B8 ---- R	     1		 MOV AX,SEG MUL_INFO
+ 033B  8E D8		     1		 MOV DS,AX
+ 033D  8D 16 0051 R	     1		 LEA DX,MUL_INFO
+ 0341  B4 09		     1		 MOV AH,9
+ 0343  CD 21		     1		 INT 21H
+ 0345  1F		     1		 POP DS
+ 0346  5A		     2		POP DX
+ 0347  59		     2		POP CX
+ 0348  5B		     2		POP BX
+ 0349  58		     2		POP AX
+					PRINT_NUMS AX
+ 034A  50		     2		PUSH AX
+ 034B  53		     2		PUSH BX
+ 034C  51		     2		PUSH CX
+ 034D  52		     2		PUSH DX
+ 034E  8B C0		     1	   MOV AX,AX
+ 0350  BA 0000		     1	   MOV DX,0
+ 0353  B9 0000		     1	   MOV CX,0
+ 0356  BB 000A		     1	   MOV BX,10
+ 0359			     1	   ??000B:
+ 0359  F7 F3		     1	    DIV BX
+ 035B  52		     1	    PUSH DX
+ 035C  BA 0000		     1	    MOV DX,0
+ 035F  41		     1	    INC CX
+ 0360  83 F8 00		     1	    CMP AX,0
+ 0363  74 02		     1	    JE ??000C
+ 0365  EB F2		     1	    JMP ??000B
+ 0367			     1	   ??000C:
+ 0367  58		     1	    POP AX
+ 0368  05 3030		     1	    ADD AX,3030H
+ 036B  50		     3		PUSH AX
+ 036C  53		     3		PUSH BX
+ 036D  51		     3		PUSH CX
+ 036E  52		     3		PUSH DX
+ 036F  B4 02		     2		 MOV AH,2
+ 0371  8A D0		     2		 MOV DL,AL
+ 0373  CD 21		     2		 INT 21H
+ 0375  5A		     3		POP DX
+ 0376  59		     3		POP CX
+ 0377  5B		     3		POP BX
+ 0378  58		     3		POP AX
+ 0379  E2 EC		     1	    LOOP ??000C
+ 037B  5A		     2		POP DX
+ 037C  59		     2		POP CX
+ 037D  5B		     2		POP BX
+ 037E  58		     2		POP AX
+					NEXTLINE
+ 037F  50		     3		PUSH AX
+ 0380  53		     3		PUSH BX
+ 0381  51		     3		PUSH CX
+ 0382  52		     3		PUSH DX
+ 0383  B4 02		     2		 MOV AH,2
+ 0385  B2 0A		     2		 MOV DL,0AH
+ 0387  CD 21		     2		 INT 21H
+ 0389  5A		     3		POP DX
+ 038A  59		     3		POP CX
+ 038B  5B		     3		POP BX
+ 038C  58		     3		POP AX
+ 038D  50		     3		PUSH AX
+ 038E  53		     3		PUSH BX
+ 038F  51		     3		PUSH CX
+ 0390  52		     3		PUSH DX
+ 0391  B4 02		     2		 MOV AH,2
+ 0393  B2 0D		     2		 MOV DL,0DH
+ 0395  CD 21		     2		 INT 21H
+ 0397  5A		     3		POP DX
+ 0398  59		     3		POP CX
+ 0399  5B		     3		POP BX
+ 039A  58		     3		POP AX
+ 039B  C3				RET
+ 039C				DO_MUL ENDP
+
+				;除法
+ 039C				DO_DIV PROC
+
+ 039C  A1 0000 R			MOV AX,MTIME_1
+ 039F  8B 1E 0002 R			MOV BX,MTIME_2
+ 03A3  F7 F3				DIV BX
+					;打印商
+					PRINTS DIV_INFO
+ 03A5  50		     2		PUSH AX
+ 03A6  53		     2		PUSH BX
+ 03A7  51		     2		PUSH CX
+ 03A8  52		     2		PUSH DX
+ 03A9  1E		     1		 PUSH DS
+ 03AA  B8 ---- R	     1		 MOV AX,SEG DIV_INFO
+ 03AD  8E D8		     1		 MOV DS,AX
+ 03AF  8D 16 0060 R	     1		 LEA DX,DIV_INFO
+ 03B3  B4 09		     1		 MOV AH,9
+ 03B5  CD 21		     1		 INT 21H
+ 03B7  1F		     1		 POP DS
+ 03B8  5A		     2		POP DX
+ 03B9  59		     2		POP CX
+ 03BA  5B		     2		POP BX
+ 03BB  58		     2		POP AX
+					PRINT_NUMS AX
+ 03BC  50		     2		PUSH AX
+ 03BD  53		     2		PUSH BX
+ 03BE  51		     2		PUSH CX
+ 03BF  52		     2		PUSH DX
+ 03C0  8B C0		     1	   MOV AX,AX
+ 03C2  BA 0000		     1	   MOV DX,0
+ 03C5  B9 0000		     1	   MOV CX,0
+ 03C8  BB 000A		     1	   MOV BX,10
+ 03CB			     1	   ??000D:
+ 03CB  F7 F3		     1	    DIV BX
+ 03CD  52		     1	    PUSH DX
+ 03CE  BA 0000		     1	    MOV DX,0
+ 03D1  41		     1	    INC CX
+ 03D2  83 F8 00		     1	    CMP AX,0
+ 03D5  74 02		     1	    JE ??000E
+ 03D7  EB F2		     1	    JMP ??000D
+ 03D9			     1	   ??000E:
+ 03D9  58		     1	    POP AX
+ 03DA  05 3030		     1	    ADD AX,3030H
+ 03DD  50		     3		PUSH AX
+ 03DE  53		     3		PUSH BX
+ 03DF  51		     3		PUSH CX
+ 03E0  52		     3		PUSH DX
+ 03E1  B4 02		     2		 MOV AH,2
+ 03E3  8A D0		     2		 MOV DL,AL
+ 03E5  CD 21		     2		 INT 21H
+ 03E7  5A		     3		POP DX
+ 03E8  59		     3		POP CX
+ 03E9  5B		     3		POP BX
+ 03EA  58		     3		POP AX
+ 03EB  E2 EC		     1	    LOOP ??000E
+ 03ED  5A		     2		POP DX
+ 03EE  59		     2		POP CX
+ 03EF  5B		     2		POP BX
+ 03F0  58		     2		POP AX
+					;打印余数
+					PRINTS MOD_INFO
+ 03F1  50		     2		PUSH AX
+ 03F2  53		     2		PUSH BX
+ 03F3  51		     2		PUSH CX
+ 03F4  52		     2		PUSH DX
+ 03F5  1E		     1		 PUSH DS
+ 03F6  B8 ---- R	     1		 MOV AX,SEG MOD_INFO
+ 03F9  8E D8		     1		 MOV DS,AX
+ 03FB  8D 16 006F R	     1		 LEA DX,MOD_INFO
+ 03FF  B4 09		     1		 MOV AH,9
+ 0401  CD 21		     1		 INT 21H
+ 0403  1F		     1		 POP DS
+ 0404  5A		     2		POP DX
+ 0405  59		     2		POP CX
+ 0406  5B		     2		POP BX
+ 0407  58		     2		POP AX
+					PRINT_NUMS DX
+ 0408  50		     2		PUSH AX
+ 0409  53		     2		PUSH BX
+ 040A  51		     2		PUSH CX
+ 040B  52		     2		PUSH DX
+ 040C  8B C2		     1	   MOV AX,DX
+ 040E  BA 0000		     1	   MOV DX,0
+ 0411  B9 0000		     1	   MOV CX,0
+ 0414  BB 000A		     1	   MOV BX,10
+ 0417			     1	   ??000F:
+ 0417  F7 F3		     1	    DIV BX
+ 0419  52		     1	    PUSH DX
+ 041A  BA 0000		     1	    MOV DX,0
+ 041D  41		     1	    INC CX
+ 041E  83 F8 00		     1	    CMP AX,0
+ 0421  74 02		     1	    JE ??0010
+ 0423  EB F2		     1	    JMP ??000F
+ 0425			     1	   ??0010:
+ 0425  58		     1	    POP AX
+ 0426  05 3030		     1	    ADD AX,3030H
+ 0429  50		     3		PUSH AX
+ 042A  53		     3		PUSH BX
+ 042B  51		     3		PUSH CX
+ 042C  52		     3		PUSH DX
+ 042D  B4 02		     2		 MOV AH,2
+ 042F  8A D0		     2		 MOV DL,AL
+ 0431  CD 21		     2		 INT 21H
+ 0433  5A		     3		POP DX
+ 0434  59		     3		POP CX
+ 0435  5B		     3		POP BX
+ 0436  58		     3		POP AX
+ 0437  E2 EC		     1	    LOOP ??0010
+ 0439  5A		     2		POP DX
+ 043A  59		     2		POP CX
+ 043B  5B		     2		POP BX
+ 043C  58		     2		POP AX
+					NEXTLINE
+ 043D  50		     3		PUSH AX
+ 043E  53		     3		PUSH BX
+ 043F  51		     3		PUSH CX
+ 0440  52		     3		PUSH DX
+ 0441  B4 02		     2		 MOV AH,2
+ 0443  B2 0A		     2		 MOV DL,0AH
+ 0445  CD 21		     2		 INT 21H
+ 0447  5A		     3		POP DX
+ 0448  59		     3		POP CX
+ 0449  5B		     3		POP BX
+ 044A  58		     3		POP AX
+ 044B  50		     3		PUSH AX
+ 044C  53		     3		PUSH BX
+ 044D  51		     3		PUSH CX
+ 044E  52		     3		PUSH DX
+ 044F  B4 02		     2		 MOV AH,2
+ 0451  B2 0D		     2		 MOV DL,0DH
+ 0453  CD 21		     2		 INT 21H
+ 0455  5A		     3		POP DX
+ 0456  59		     3		POP CX
+ 0457  5B		     3		POP BX
+ 0458  58		     3		POP AX
+ 0459  C3				RET
+					
+ 045A				DO_DIV ENDP
+
+				;延时
+ 045A				DELAY PROC
+
+				    ;读取时钟
+ 045A  B4 00				MOV AH,00H
+ 045C  CD 1A				INT 1AH
+ 045E  8B DA				MOV BX,DX
+					;反复查询时间差额是否满足
+ 0460				   REPTS:
+ 0460  B4 00			    MOV AH,00H
+ 0462  CD 1A			    INT 1AH
+ 0464  8B C2			    MOV AX,DX
+ 0466  2B C3			    SUB AX,BX
+				    ;0s<AX<1s
+ 0468  83 F8 0E			    CMP AX,14
+ 046B  7C F3			    JL REPTS
+ 046D  80 3E 009C R 1E		    CMP DELAY_TIME,30
+ 0472  76 02			    JBE DO_REPE_ADD
+ 0474  77 07			    JA DO_REPE_SUB
+				   ;延时时间反复游弋（8~32）
+ 0476				   DO_REPE_ADD:
+ 0476  B3 02			    MOV BL,2
+ 0478  00 1E 009C R		    ADD DELAY_TIME,BL
+ 047C  C3			    RET
+ 047D				   DO_REPE_SUB:
+ 047D  B3 18			    MOV BL,24
+ 047F  28 1E 009C R		    SUB DELAY_TIME,BL
+ 0483  C3			    RET
+				    
+ 0484				DELAY ENDP
+
+ 0484				CODES ENDS
+				    END START
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:01:20
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+CLEAR_SCREEN . . . . . . . . . .	Proc
+DO_AGAIN . . . . . . . . . . . .	Proc
+GET_MTIME  . . . . . . . . . . .	Proc
+NEXTLINE . . . . . . . . . . . .	Proc
+PRINTC . . . . . . . . . . . . .	Proc
+PRINTS . . . . . . . . . . . . .	Proc
+PRINT_NUMS . . . . . . . . . . .	Proc
+PROTECT_STACK  . . . . . . . . .	Proc
+RECOVER_STACK  . . . . . . . . .	Proc
+RTSYS  . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0484	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 009D	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0000	  Para	  Private 
+
+
+Procedures,  parameters and locals:
+
+                N a m e                 Type     Value    Attr
+
+DELAY  . . . . . . . . . . . . .	P Near	 045A	  CODES	Length= 002A Public
+  REPTS  . . . . . . . . . . . .	L Near	 0460	  CODES	
+  DO_REPE_ADD  . . . . . . . . .	L Near	 0476	  CODES	
+  DO_REPE_SUB  . . . . . . . . .	L Near	 047D	  CODES	
+DO_ADD . . . . . . . . . . . . .	P Near	 01C8	  CODES	Length= 0072 Public
+  ??0005 . . . . . . . . . . . .	L Near	 01F7	  CODES	
+  ??0006 . . . . . . . . . . . .	L Near	 0205	  CODES	
+DO_DIV . . . . . . . . . . . . .	P Near	 039C	  CODES	Length= 00BE Public
+  ??000D . . . . . . . . . . . .	L Near	 03CB	  CODES	
+  ??000E . . . . . . . . . . . .	L Near	 03D9	  CODES	
+  ??000F . . . . . . . . . . . .	L Near	 0417	  CODES	
+  ??0010 . . . . . . . . . . . .	L Near	 0425	  CODES	
+DO_MUL . . . . . . . . . . . . .	P Near	 032A	  CODES	Length= 0072 Public
+  ??000B . . . . . . . . . . . .	L Near	 0359	  CODES	
+  ??000C . . . . . . . . . . . .	L Near	 0367	  CODES	
+DO_SUB . . . . . . . . . . . . .	P Near	 023A	  CODES	Length= 0185 Public
+  ??0007 . . . . . . . . . . . .	L Near	 027C	  CODES	
+  ??0008 . . . . . . . . . . . .	L Near	 028A	  CODES	
+  SUB_NN . . . . . . . . . . . .	L Near	 02BF	  CODES	
+  ??0009 . . . . . . . . . . . .	L Near	 02E7	  CODES	
+  ??000A . . . . . . . . . . . .	L Near	 02F5	  CODES	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+??0000 . . . . . . . . . . . . .	L Near	 00B4	  CODES	
+??0001 . . . . . . . . . . . . .	L Near	 00C2	  CODES	
+??0002 . . . . . . . . . . . . .	L Near	 012A	  CODES	
+??0003 . . . . . . . . . . . . .	L Near	 0138	  CODES	
+??0004 . . . . . . . . . . . . .	L Near	 01A3	  CODES	
+ADD_INFO . . . . . . . . . . . .	Byte	 0033	  DATAS	
+CODE . . . . . . . . . . . . . .	L Near	 0059	  CODES	
+DELAY_TIME . . . . . . . . . . .	Byte	 009C	  DATAS	
+DIVIDE_END . . . . . . . . . . .	L Near	 007D	  CODES	
+DIVIDE_ERROR . . . . . . . . . .	Byte	 001A	  CODES	
+DIVIDE_START . . . . . . . . . .	L Near	 0018	  CODES	
+DIV_INFO . . . . . . . . . . . .	Byte	 0060	  DATAS	
+MOD_INFO . . . . . . . . . . . .	Byte	 006F	  DATAS	
+MTIME_1  . . . . . . . . . . . .	Word	 0000	  DATAS	
+MTIME_2  . . . . . . . . . . . .	Word	 0002	  DATAS	
+MUL_INFO . . . . . . . . . . . .	Byte	 0051	  DATAS	
+NUM_INFO_AFTER . . . . . . . . .	Byte	 001B	  DATAS	
+NUM_INFO_BEFORE  . . . . . . . .	Byte	 0004	  DATAS	
+STARTS . . . . . . . . . . . . .	L Near	 007E	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+SUB_INFO . . . . . . . . . . . .	Byte	 0042	  DATAS	
+TIPS_INFO  . . . . . . . . . . .	Byte	 0078	  DATAS	
+
+	   0 Warnings
+	   0 Errors

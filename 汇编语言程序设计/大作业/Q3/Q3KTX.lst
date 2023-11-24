@@ -1,0 +1,226 @@
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:00:57
+tempfile.asm						     Page 1 - 1
+
+
+				;---------- 题 3 ---------------
+
+				;3.	编写90H号软件中断程序，
+				;在第（10）行**（班级序列号为35）**列彩色显示你的姓名
+				;(注：要求中断驻留，行从第0行开始计算，列从第0列开始计算)。
+
+				;-----------------------------
+
+ 0000				DATAS SEGMENT
+ 0000				DATAS ENDS
+
+ 0000				STACKS SEGMENT
+ 0000				STACKS ENDS
+
+ 0000				CODES SEGMENT
+				    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+ 0000				START:
+
+				;-------------------------------------MACRO
+
+				;宏，保护现场
+				PROTECT_STACK MACRO
+					PUSH AX
+					PUSH BX
+					PUSH CX
+					PUSH DX
+				ENDM
+
+				;宏，现场恢复
+				RECOVER_STACK MACRO
+					POP DX
+					POP CX
+					POP BX
+					POP AX
+
+				ENDM
+
+				;宏 清屏
+				CLEAR_SCREEN MACRO
+
+					PROTECT_STACK
+					
+				    MOV AH,6
+					MOV AL,0
+					MOV BH,07H  ;黑底白字
+					MOV CH,0	;左上(0,0)
+					MOV CL,0
+					MOV DH,24
+					MOV DL,79	;右下(24,79)->25 * 80
+					INT 10H
+					;移动光标到开头
+					MOV AH,2
+					MOV DH,0
+					MOV DL,0
+					MOV BH,0
+					INT 10H
+					
+					RECOVER_STACK
+					
+				ENDM
+				;---------------------------------------START
+				    
+				    ;将90H号中断放入向量表中
+ 0000  8D 16 001C R		    LEA DX,OUTPUTSTART
+ 0004  B8 ---- R		    MOV AX,SEG OUTPUTSTART
+ 0007  8E D8			    MOV DS,AX
+ 0009  B0 90			    MOV AL,90H
+ 000B  B4 25			    MOV AH,25H
+ 000D  CD 21			    INT 21H
+				    
+				    ;中断驻留
+ 000F  B4 31			    MOV AH,31H
+ 0011  B0 00			    MOV AL,0
+ 0013  BA 0085			    MOV DX,OUTPUTEND-OUTPUTSTART+16
+				    
+				    ;触发90H号中断
+ 0016  CD 90			    INT 90H
+				    
+ 0018  B4 4C			    MOV AH,4CH
+ 001A  CD 21			    INT 21H
+				    
+				    ;中断程序
+ 001C				    OUTPUTSTART:
+				    
+ 001C  EB 0C			    JMP CODE
+				    ;姓名
+ 001E 4B 4F 4E 47 54 49		    MYNAME DB 'KONGTIANXIN'
+       41 4E 58 49 4E
+				    ;颜色
+ 0029 1E			    COLOR DB 1EH
+ 002A				    CODE:
+				    
+				    ;现场保护
+ 002A  1E			    PUSH DS
+				    PROTECT_STACK
+ 002B  50		     1		PUSH AX
+ 002C  53		     1		PUSH BX
+ 002D  51		     1		PUSH CX
+ 002E  52		     1		PUSH DX
+ 002F  0E			    PUSH CS
+ 0030  1F			    POP DS
+				    
+				    CLEAR_SCREEN
+ 0031  50		     2		PUSH AX
+ 0032  53		     2		PUSH BX
+ 0033  51		     2		PUSH CX
+ 0034  52		     2		PUSH DX
+ 0035  B4 06		     1	    MOV AH,6
+ 0037  B0 00		     1		MOV AL,0
+ 0039  B7 07		     1		MOV BH,07H  ;黑底白字
+ 003B  B5 00		     1		MOV CH,0	;左上(0,0)
+ 003D  B1 00		     1		MOV CL,0
+ 003F  B6 18		     1		MOV DH,24
+ 0041  B2 4F		     1		MOV DL,79	;右下(24,79)->25 * 80
+ 0043  CD 10		     1		INT 10H
+ 0045  B4 02		     1		MOV AH,2
+ 0047  B6 00		     1		MOV DH,0
+ 0049  B2 00		     1		MOV DL,0
+ 004B  B7 00		     1		MOV BH,0
+ 004D  CD 10		     1		INT 10H
+ 004F  5A		     2		POP DX
+ 0050  59		     2		POP CX
+ 0051  5B		     2		POP BX
+ 0052  58		     2		POP AX
+				    
+				    ;移动光标到10行35列
+ 0053  B4 02				MOV AH,2
+ 0055  B6 0A				MOV DH,10
+ 0057  B2 23				MOV DL,35
+ 0059  B7 00				MOV BH,0
+ 005B  CD 10				INT 10H
+				    
+				    ;写显存
+ 005D  BB B800				MOV BX,0B800H
+ 0060  8E C3				MOV ES,BX
+					;行：A0H * AH = 640H
+ 0062  BB 0640				MOV BX,640H
+					;列 2H * 23H(35D) = 46H
+ 0065  BF 0046				MOV DI,46H
+					;名字的长度作为循环
+ 0068  B9 000B				MOV CX,DWORD PTR COLOR-MYNAME
+ 006B  BE 0000				MOV SI,0
+ 006E					PAINT:
+					;输出字符
+ 006E  B4 02				MOV AH,2
+ 0070  2E: 8A 94 001E R			MOV DL,MYNAME[SI]
+ 0075  46				INC SI
+ 0076  CD 21				INT 21H
+ 0078  2E: A0 0029 R			MOV AL,COLOR
+					;填色，奇地址存放属性
+ 007C  26: 00 41 01			ADD BYTE PTR ES:[BX+1+DI],AL
+					;下一个字符换颜色
+ 0080  04 03				ADD AL,3H		
+ 0082  2E: A2 0029 R			MOV COLOR,AL
+					;下一个相邻位置
+ 0086  83 C3 02				ADD BX,2
+ 0089  E2 E3				LOOP PAINT
+				    
+				    ;现场恢复
+				    RECOVER_STACK
+ 008B  5A		     1		POP DX
+ 008C  59		     1		POP CX
+ 008D  5B		     1		POP BX
+ 008E  58		     1		POP AX
+ 008F  1F			    POP DS
+ 0090  CF			    IRET
+ 0091  90			    OUTPUTEND:NOP
+ 0092				CODES ENDS
+				    END START
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Microsoft (R) Macro Assembler Version 6.11		    06/04/20 10:00:57
+tempfile.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+CLEAR_SCREEN . . . . . . . . . .	Proc
+PROTECT_STACK  . . . . . . . . .	Proc
+RECOVER_STACK  . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+CODES  . . . . . . . . . . . . .	16 Bit	 0092	  Para	  Private 
+DATAS  . . . . . . . . . . . . .	16 Bit	 0000	  Para	  Private 
+STACKS . . . . . . . . . . . . .	16 Bit	 0000	  Para	  Private 
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+CODE . . . . . . . . . . . . . .	L Near	 002A	  CODES	
+COLOR  . . . . . . . . . . . . .	Byte	 0029	  CODES	
+MYNAME . . . . . . . . . . . . .	Byte	 001E	  CODES	
+OUTPUTEND  . . . . . . . . . . .	L Near	 0091	  CODES	
+OUTPUTSTART  . . . . . . . . . .	L Near	 001C	  CODES	
+PAINT  . . . . . . . . . . . . .	L Near	 006E	  CODES	
+START  . . . . . . . . . . . . .	L Near	 0000	  CODES	
+
+	   0 Warnings
+	   0 Errors

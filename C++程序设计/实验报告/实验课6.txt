@@ -1,0 +1,99 @@
+#include<iostream>
+#include"student.h"
+
+using namespace std;
+
+int main()
+{
+	Student stu[5] = { { 20188212,100,0 },{20188213,65,72},{20188214,98,77},{20188215,77,69},{20188216,82,91} };
+	double avgAMath, avgCplus, maxCplus, maxAMath;
+	avgAMath = stu[0].avgAMath(&stu[0]);
+	avgCplus = stu[0].avgCplus(&stu[0]);
+	maxCplus = stu[0].maxCplus(&stu[0]);
+	maxAMath = stu[0].maxAMath(&stu[0]);
+	cout<<
+}
+
+#include<iostream>
+#include"student.h"
+
+using namespace std;
+
+Student::Student(int number, double math, double C)
+{
+	CPluseScore = C;
+	AMathScore = math;
+	ID = number;
+}
+
+double Student::avgAMath(Student *p)
+{
+	int sum, n;
+	sum = n = 0;
+	while (p->AMathScore != '\0')
+	{
+		sum += p->AMathScore;
+		n++;
+		p++;
+	}
+	return sum / n;
+
+}
+double Student::avgCplus(Student *p)
+{
+	int sum, n;
+	sum = n = 0;
+	while (p->CPluseScore != '\0')
+	{
+		sum += p->CPluseScore;
+		n++;
+		p++;
+	}
+	return sum / n;
+}
+double Student::maxAMath(Student *p)
+{
+	int max = 0;
+	while (p->AMathScore != '\0')
+	{
+		if (max <= p->AMathScore)
+		{
+			max = p->AMathScore;
+		}
+		p++;
+	}
+	return max;
+}
+double Student::maxCplus(Student *p)
+{
+	int max = 0;
+	while (p->CPluseScore != '\0')
+	{
+		if (max <= p->CPluseScore)
+		{
+			max = p->CPluseScore;
+		}
+		p++;
+	}
+	return max;
+}
+
+#include<iostream>
+
+using namespace std;
+
+class Student
+{
+private:
+	int ID;
+	string Name;
+	double CPluseScore;
+	double AMathScore;
+public:
+	Student(int number,double math,double C);
+	double maxCplus(Student *p);
+	double maxAMath(Student *p);
+	double avgCplus(Student *p);
+	double avgAMath(Student *p);
+
+};

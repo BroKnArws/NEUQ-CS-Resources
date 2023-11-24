@@ -1,0 +1,66 @@
+EXTRN SORT:NEAR
+EXTRN INNAME:NEAR
+EXTRN INSCORE:NEAR
+EXTRN DIS:NEAR
+INCLUDE PACK.mac
+
+DATAS SEGMENT COMMON 'DATA'
+
+   P EQU 5    ;学生数
+   NL EQU 15  ;NAME 完整长度
+   SL EQU 4   ;SCORE 完整长度
+   NL1 EQU 13 ;NAME 实际长度
+   TEMP1 DB 0 ;存放实时学号
+   TEMP2 DB 1
+
+   NAMEA DB P DUP(NL1,?,NL1 DUP('$'))  ;存入5个名字且名字长度小于11
+   SCOREASC DB P DUP(SL DUP('$'))   ;存入5个成绩，每个成绩（3字节）以$结尾
+   RANK DW 0,1,2,3,4    ;相当于NAMEA和SCOREASC数组下标
+   SCOREN DW 5 DUP(0)   ;存放数值以及排序完成的成绩
+    
+   X DB 3 DUP(?)   ; 存放0-255的数据
+DATAS ENDS
+
+STACKS SEGMENT
+STACKS ENDS
+
+CODES SEGMENT PUBLIC 'CODE'
+	ASSUME CS:CODES,DS:DATAS,SS:STACKS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+    MOV CX,P   ;循环输入信息
+    LOOPM:
+	CALL INNAME   ;输入姓名
+	CALL INSCORE  ;输入成绩
+    INC TEMP1
+    LOOP LOOPM
+    CALL SORT     ;排序
+    CALL DIS      ;显示成绩
+    MOV AH,4CH
+    INT 21H
+
+CODES ENDS
+    END START
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

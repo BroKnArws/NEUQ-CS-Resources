@@ -1,0 +1,54 @@
+DATAS SEGMENT
+   SCORE DB 23,95,89,34,67,88,25,90,91,22
+   		 DB 33,60,88,92,93,66,57,89,34,56
+   		 DB 89,90,91,92,88,87,66,55,21,66
+   N DB ?
+DATAS ENDS
+
+STACKS SEGMENT
+	DW 10 DUP(0)
+STACKS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+    MOV AX,STACKS
+    MOV SS,AX
+    MOV SP,20
+   
+    MOV AL,N-SCORE
+    DEC AL
+    MOV AH,0
+  	;√∞≈›≈≈–Ú
+  	MOV CX,AX         ;≈≈ CX ÃÀ
+  	OUT2:
+  	PUSH CX			  
+  	MOV SI,0		  
+  	
+  	OUT3:
+  	MOV AL,SCORE[SI]
+  	CMP AL,SCORE[SI+1]
+  	JB NEXT           ;…˝–Ú≈≈–Ú
+  	XCHG AL,SCORE[SI+1] ;ΩªªªÀ≥–Ú
+  	MOV SCORE[SI],AL
+  	
+  	NEXT:
+  	INC SI           
+  	LOOP OUT3
+  	
+  	POP CX
+  	LOOP OUT2
+  	
+    MOV AH,4CH
+    INT 21H
+CODES ENDS
+    END START
+
+
+
+
+
+
+

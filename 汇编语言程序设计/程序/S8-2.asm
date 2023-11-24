@@ -1,0 +1,43 @@
+CODES SEGMENT
+    ASSUME CS:CODES
+START:
+    
+    ;将7CH号中断放入向量表中
+    LEA DX,OUTPUTSTART
+    MOV AX,SEG OUTPUTSTART
+    MOV DS,AX
+    MOV AL,7CH
+    MOV AH,25H
+    INT 21H
+    
+    INT 7CH
+    
+    ;中断驻留
+    MOV AH,31H
+    MOV AL,0
+    MOV DX,OUTPUTEND-OUTPUTSTART+16
+    MOV AH,4CH
+    INT 21H
+    
+    ;中断程序
+    OUTPUTSTART:
+    JMP CODE
+    NAMEINFO DB '180235 20188068 KONGTIANXIN$'
+    CODE:
+    PUSH DS
+    PUSH DX
+    PUSH AX
+    PUSH CS
+    POP DS
+    ;输出
+    LEA DX,NAMEINFO
+    MOV AH,9
+    INT 21H
+    POP AX
+    POP DX
+    POP DS
+    IRET
+    OUTPUTEND:NOP
+CODES ENDS
+    END START
+

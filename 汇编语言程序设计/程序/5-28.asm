@@ -1,0 +1,35 @@
+DATAS SEGMENT
+    X DB -16
+    Y DB 0
+    Z DB ?
+DATAS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+    
+    MOV AH,0
+    MOV AL,X
+    CMP AL,0
+    JGE LET1
+    NEG AX
+    MOV Y,AL
+    JMP LETE 
+    
+    LET1:
+    MOV BL,4
+    IMUL BL
+    MOV AH,0
+    MOV BL,Y
+    MOV CL,16
+    IDIV CL
+      
+    LETE:
+    MOV Z,AL
+    
+    MOV AH,4CH
+    INT 21H
+CODES ENDS
+    END START

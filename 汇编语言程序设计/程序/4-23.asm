@@ -1,0 +1,25 @@
+DATAS SEGMENT
+    BUFF DB ?
+DATAS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+    
+    MOV AH,1
+    INT 21H
+    
+   ;SUB al,30h  ;4-23题：去掉ASCII
+    SUB AL,32    ;4-24题：转为大写
+    
+    MOV BUFF,AL
+    
+    MOV AH,4CH
+    INT 21H
+CODES ENDS
+    END START
+
+
+

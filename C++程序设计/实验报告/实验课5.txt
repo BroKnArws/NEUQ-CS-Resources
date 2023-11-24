@@ -1,0 +1,57 @@
+#include<iostream>
+#include<string>
+#include"stdio.h"
+using namespace std;
+
+struct process
+{
+	string pName;
+	int pID;
+	int pPriority;
+	int pState;
+	int pCPU;
+	string pDescripition;
+	struct process *next;
+};
+
+int main()
+{
+	int m, n;
+	process proc[5], t;
+	proc[0] = { "chrome.exe",101,10,1,3,"google chrome" };
+	proc[1] = { "360.exe",102,7,1,1,"360安全卫士" };
+	proc[2] = { "QQ.exe",103,5,1,4,"腾讯QQ" };
+	proc[3] = { "CPPIDE.exe",104,3,1,2,"CFree5.0" };
+	for (m = 0; m < 4; m++)
+	{
+		for (n = 0; n < 4 - m; n++)
+		{
+			if (proc[m].pPriority <= proc[m + 1].pPriority)
+			{
+				t = proc[m]; proc[m] = proc[m + 1]; proc[m + 1] = t;
+			}
+		}
+	}
+	for (m = 0; m < 4; m++)
+	{
+		proc[m].pState = 2;
+		while (proc[m].pCPU != 0)
+		{
+			for (n = 0; n < 4; n++)
+			{
+				if (proc[n].pState == 1)
+				{
+					proc[n].pPriority++;
+				}
+			}
+			proc[m].pPriority -= 3;
+			proc[m].pCPU--;
+		}
+		proc[m].pState = 3;
+	}
+	for (m = 0; m < 4; m++)
+	{
+		cout << proc[m].pCPU << " ";
+	}
+
+}

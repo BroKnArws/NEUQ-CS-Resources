@@ -1,0 +1,28 @@
+<RCC>
+    <qresource prefix="/">
+        <file>css/index.css</file>
+        <file>icons/analysic.png</file>
+        <file>icons/home.png</file>
+        <file>icons/logout.png</file>
+        <file>icons/setting.png</file>
+        <file>icons/logo.png</file>
+        <file>icons/member.png</file>
+        <file>icons/modular.png</file>
+        <file>icons/money.png</file>
+        <file>icons/phone.png</file>
+        <file>icons/umbrella.png</file>
+        <file>icons/mini.png</file>
+        <file>icons/item_01.png</file>
+        <file>icons/item_02.png</file>
+        <file>icons/mine.png</file>
+        <file>icons/check.png</file>
+        <file>icons/error.png</file>
+        <file>icons/out.png</file>
+        <file>icons/question.png</file>
+        <file>icons/show.png</file>
+        <file>icons/warn.png</file>
+        <file>icons/close.png</file>
+        <file>icons/down.png</file>
+        <file>icons/up.png</file>
+    </qresource>
+</RCC>

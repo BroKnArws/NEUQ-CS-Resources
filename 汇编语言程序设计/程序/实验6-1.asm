@@ -1,0 +1,276 @@
+DATAS SEGMENT
+
+   P EQU 5    ;学生数
+   NL EQU 15  ;NAME 完整长度
+   SL EQU 4   ;SCORE 完整长度
+   NL1 EQU 13 ;NAME 实际长度
+   TEMP1 DB 0 ;存放实时学号
+   TEMP2 DB 1
+
+   NAMEA DB P DUP(NL1,?,NL1 DUP('$'))  ;存入5个名字且名字长度小于11
+   SCOREASC DB P DUP(SL DUP('$'))   ;存入5个成绩，每个成绩（3字节）以$结尾
+   RANK DW 0,1,2,3,4    ;相当于NAMEA和SCOREASC数组下标
+   SCOREN DW 5 DUP(0)   ;存放数值以及排序完成的成绩
+    
+   X DB 3 DUP(?)   ; 存放0-255的数据
+DATAS ENDS
+
+STACKS SEGMENT
+STACKS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS,SS:STACKS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+    MOV CX,P   ;循环输入信息
+    LOOPM:
+	CALL INNAME   ;输入姓名
+	CALL INSCORE  ;输入成绩
+    INC TEMP1
+    LOOP LOOPM
+    CALL SORT     ;排序
+    CALL DIS      ;显示成绩
+    
+    MOV AH,4CH
+    INT 21H
+    
+    ;-----姓名处理-----
+	INNAME PROC
+
+	 PUSH AX
+	 PUSH BX
+	 PUSH CX
+	 PUSH DX
+	 
+	 MOV AL,TEMP1 ; TEMP1 用于标注当前输入同学序号
+	 
+	 ;NAMEA[N] -> RANK * NL + NAMEA 
+	 MOV CL,NL     
+	 MUL CL
+	 LEA DX,NAMEA
+	 ADD DX,AX
+	 
+	 ;输入
+	 MOV AH,10
+	 INT 21H
+	 
+	 MOV BX,DX
+	 MOV BYTE PTR [BX],0AH
+	 INC BX
+	 MOV BYTE PTR [BX],0DH
+	 
+	 POP DX
+	 POP CX
+	 POP BX
+	 POP AX
+	 RET
+	 
+	INNAME ENDP
+	    
+	;-----成绩处理-----
+	INSCORE PROC
+	 PUSH AX
+	 PUSH BX
+	 PUSH CX
+	 PUSH DX
+	 PUSH SI
+	 PUSH DI
+	 PUSH BP 
+	 
+     MOV AH,2
+     MOV DL,0AH
+     INT 21H
+     MOV DL,0DH
+     INT 21H
+     
+     MOV AL,TEMP1
+	 MOV CL,SL
+	 MUL CL
+	 LEA BP,SCOREASC
+	 ADD BP,AX      ;SCOREASC[N] -> RANK * SL + SCOREASC
+    
+	 ; 初始化
+	 MOV SI,0
+	 
+	 ; ---输入数字字符
+	 
+	 LET0:
+	 MOV AH,1     ; 输入字符
+	 INT 21H
+	 CMP AL,0DH
+	 JE LET1
+	 MOV DS:[BP],AL ;存入SCOREASC
+	 SUB AL,30H 
+	 MOV X[SI],AL
+	 INC SI 
+	 INC BP
+	 JMP LET0      
+	 
+	 LET1:
+	
+	 ; 初始化
+	 MOV DI,0
+	 MOV BX,0
+	 ;--- 数字处理
+	
+	 CMP SI,1     ;是 一位数?
+	 JE LET2
+	
+	 CMP SI,2     ;是 二位数?
+	 JE LET3
+	
+	 MOV AL,X[DI] ;第三位处理
+	 MOV CL,100
+	 MUL CL
+	
+	 ADD BX,AX
+	 INC DI
+	
+	 ;第二位处理
+	 LET3:
+	 MOV AL,X[DI]
+	 MOV CL,10
+	 MUL CL
+	
+	 ADD BX,AX
+	 INC DI
+	
+	 ;第一位处理
+	 LET2:
+	 MOV AL,X[DI]
+	 MOV AH,0
+	 ADD BX,AX
+	
+	 ; SCOREN + TEMP1 * 2
+	 MOV AL,TEMP1
+	 MOV CL,2
+	 MUL CL
+	 MOV AH,0
+	 MOV BP,AX
+	 MOV SCOREN[BP],BX ;存入SCOREN
+	
+	 POP BP
+	 POP DI
+	 POP SI
+	 POP DX
+	 POP CX
+	 POP BX
+	 POP AX
+	 RET
+	 
+	INSCORE ENDP
+	
+	;-----冒泡逆序排序-----
+	SORT PROC
+	 PUSH AX
+	 PUSH BX
+	 PUSH CX
+	 PUSH DX
+	
+	 MOV CX,P
+	 DEC CX
+	 LOOPS1:
+	 PUSH CX
+	 MOV BX,0
+	 LOOPS2:
+	 MOV AX,SCOREN[BX]
+	 MOV DX,RANK[BX]
+	 CMP AX,SCOREN[BX+2]
+	 JGE NEXTS
+	 ;通过比较SCORE来改变RANK的次序进行排序
+	 XCHG AX,SCOREN[BX+2]
+	 MOV SCOREN[BX],AX
+	 XCHG DX,RANK[BX+2]
+	 MOV RANK[BX],DX
+	 NEXTS:
+	 ADD BX,2
+	 LOOP LOOPS2
+	 POP CX
+	 LOOP LOOPS1
+	 POP DX
+	 POP CX
+	 POP BX
+	 POP AX
+	 RET
+	SORT ENDP
+	
+	;-----输出信息-----
+	DIS PROC
+	
+	 PUSH AX
+	 PUSH BX
+	 PUSH CX
+	 PUSH DX
+	
+	 MOV BX,0
+	 MOV CX,P
+	 MOV TEMP2,1
+	
+	 ;按照RANK次序输出姓名和成绩
+	 LOOPDIS:
+	 ADD TEMP2,30H
+	 MOV DL,TEMP2
+	 MOV AH,2
+	 INT 21H
+	 MOV DL,':'
+	 MOV AH,2
+	 INT 21H
+	 ;计算偏移地址，输出姓名
+	 MOV AX,RANK[BX]
+	
+	 MOV DL,NL
+	 MUL DL
+	 LEA DX,NAMEA
+	 ADD DX,AX
+	 MOV AH,9
+	 INT 21H
+	 MOV DL,0AH
+	 MOV AH,2
+	 INT 21H
+	 MOV DL,0DH
+	 MOV AH,2
+	 INT 21H
+	
+	 ;计算偏移地址，输出成绩
+	 MOV AX,RANK[BX]
+	 MOV DL,SL
+	 MUL DL
+	 LEA DX,SCOREASC
+	 ADD DX,AX
+	 MOV AH,9
+	 INT 21H
+	 MOV DL,0AH
+	 MOV AH,2
+	 INT 21H
+	 MOV DL,0DH
+	 MOV AH,2
+	 INT 21H
+	
+	 ADD BX,2
+	 SUB TEMP2,30H
+	 INC TEMP2
+	
+	 MOV DL,0AH
+	 MOV AH,2
+	 INT 21H
+	 MOV DL,0DH
+	 INT 21H
+	 LOOP LOOPDIS
+	
+	 POP DX
+	 POP CX
+	 POP BX
+	 POP AX
+	 RET
+	
+	DIS ENDP
+CODES ENDS
+    END START
+
+
+
+
+
+
+

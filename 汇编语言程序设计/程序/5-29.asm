@@ -1,0 +1,41 @@
+DATAS SEGMENT
+   W DB 1,-1,0,2,5,-2,0,0,1,9
+   POSI DB 0
+   NEGA DB 0
+   ZERO DB 0
+DATAS ENDS
+
+CODES SEGMENT
+    ASSUME CS:CODES,DS:DATAS
+START:
+    MOV AX,DATAS
+    MOV DS,AX
+    
+    MOV SI,0
+    
+    LET0:
+    CMP SI,10
+    JE LETE
+    CMP W[SI],0
+    JL LET1
+    JG LET2
+    INC ZERO
+    INC SI
+    JMP LET0
+    
+    LET1:
+    INC NEGA
+    INC SI
+    JMP LET0
+    
+    LET2:
+    INC POSI
+    INC SI
+    JMP LET0
+    
+    LETE:
+    MOV AH,4CH
+    INT 21H
+CODES ENDS
+    END START
+
