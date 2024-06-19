@@ -1,0 +1,69 @@
+{
+    "model_type": "PyTorch",
+    "model_algorithm": "image_classification",
+    "runtime":"python3.6",
+//     模型精度消息（待定）
+    "metrics": {
+        "f1": 0.345294,
+        "accuracy": 0.462963,
+        "precision": 0.338977,
+        "recall": 0.351852
+    },
+    "apis": [{
+        "protocol": "https",
+        "url": "/",
+        "method": "post",
+        "request": {
+            "Content-type": "multipart/form-data",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "images": {
+                        "type": "file"
+                    }
+                }
+            }
+        },
+        "response": {
+            "Content-type": "multipart/form-data",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "predicted_label": {
+                        "type": "string"
+                    },
+                    "scores": {
+                        "type": "array",
+                        "items": [{
+                            "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
+                            "items": [{
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "number"
+                                }
+                            ]
+                        }]
+                    }
+                }
+            }
+        }
+    }],
+    "dependencies": [{
+        "installer": "pip",
+        "packages": [
+            {
+                "restraint": "ATLEAST",
+                "package_version": "1.0.0",
+                "package_name": "torch"
+            },
+            {
+                "restraint": "ATLEAST",
+                "package_version": "1.16.0",
+                "package_name": "numpy"
+            }
+        ]
+    }]
+}

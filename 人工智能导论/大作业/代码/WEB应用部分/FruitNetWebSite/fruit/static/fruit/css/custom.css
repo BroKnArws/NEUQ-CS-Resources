@@ -1,0 +1,930 @@
+/* =========================================
+
+# Template Name: Talent
+# Author: Themehexa
+# Description: One page Personal HTML Template
+# Version: 1.0
+
+========================================= */
+
+/*
+=========================================
+Index
+-----------------------------------------
+
+# 01. Body
+# 02. Headings, lists, anchor
+# 03. Custom margin, padding
+# 04. Custom buttons
+# 05. Custom styles
+# 06. Classes override
+# 07. Preloader
+# 08. Header
+# 09. Navigation
+# 10. Navbar Toggle
+# 11. About
+# 12. Introduction
+# 13. Skills
+# 14. Strategy
+# 15. Quotes
+# 16. Portfolio
+# 17. Milestone
+# 18. Experience
+# 19. Education
+# 20. Call to action
+# 21. Reviews
+# 22. Brands
+# 23. Blog
+# 24. Contact
+# 25. Footer
+# 26. Scroll Top
+# 27. Media queries
+
+*/
+
+/* ======================================
+ *  01. Body
+/* ====================================== */
+
+body {
+  font-family: 'Source Sans Pro', Arial, Sans-serif;
+  font-size: 15px;
+  color: #5A5252;
+  font-weight: 400;
+  letter-spacing: .25px;
+}
+
+/* ======================================
+ *  02. Headings, lists, anchor
+/* ====================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Poppins', arial, sans-serif;    
+  color: #5A5252;
+  margin: 10px 0px;
+  line-height: 1.8em;
+}
+
+h1 {
+  font-size: 40px;
+  letter-spacing: 2px;
+}
+
+h2 {
+  font-size: 25px;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: .5px;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: .25px;
+}
+
+h5 {
+  font-weight: 14px;
+}
+
+h6 {
+  font-weight: 11px;
+}
+
+p {
+  line-height: 1.8em;
+}
+
+ul li {
+  line-height: 1.8em;
+}
+
+a {
+  color: #5A5252;
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+
+a:hover, 
+a:focus,
+a:active {
+  text-decoration: none;
+  outline: none;
+  color: #5A5252;
+}
+
+/* ======================================
+ *  03. Custom margin, padding
+/* ====================================== */
+
+.top-pad {
+  padding-top: 40px;
+}
+
+.top-margin {
+  margin-top: 20px;
+}
+
+.bot-margin {
+  margin-bottom: 20px;
+}
+
+/* ======================================
+ *  04. Custom buttons
+/* ====================================== */
+
+a.custom-btn-1 {
+  border: 1px solid #FFFFFF;
+  color: #FFFFFF;
+  width: 200px;
+  padding: 10px 0px;
+  border-radius: 1px;
+  margin-top: 30px;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+a.custom-btn-1:hover {
+  background-color: #FFFFFF;
+  color: #111111;
+}
+
+a.custom-btn-1:active,
+a.custom-btn-1:focus {
+	border: 1px solid #FFFFFF;
+	color: #FFFFFF !important;
+  outline: none;
+}
+
+.btn.custom-btn-2 {
+  background-color: #111111;
+  color: #FFFFFF;
+  width: 200px;
+  padding: 10px 0px;
+  border-radius: 1px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+.btn.custom-btn-2:hover {
+  background-color: #383535;
+  color: #FFFFFF;
+}
+
+.btn.custom-btn-2:active,
+.btn.custom-btn-2:focus {
+  background-color: #111111;
+  color: #FFFFFF;
+  outline: none;
+}
+
+.custom-btn-3 {
+  background-color: #FFFFFF;
+  color: #111111;
+  width: 200px;
+  padding: 10px 0px;
+  border-radius: 1px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+}
+
+.custom-btn-3:focus {
+  background-color: #FFFFFF;
+  color: #111111;
+}
+
+.custom-btn-3:hover,
+.custom-btn-3:active {
+  background-color: #E8E8E8;
+  color: #111111;
+  outline: none;
+}
+
+/* ======================================
+ *  05. Custom styles
+/* ====================================== */
+
+.sub-headline {
+  margin: 20px 0px;
+  font-weight: 400;
+}
+
+.dot {
+  color: #111111;
+  font-size: 35px;
+  margin-left: 2px;  
+}
+
+.sub-icon span {
+  color: #111111;
+  font-size: 17px;
+  margin-right: 10px;
+}
+
+.status-icon span {
+  color: #23A35E;
+  font-size: 25px;
+  margin-right: 10px;
+}
+
+/* ======================================
+ *  06. Classes override
+/* ====================================== */
+
+.close {
+    font-size: 35px !important;
+    z-index: 300;
+    position: absolute;
+    top: 15px;
+    right: 30px;
+}
+
+.modal.modal-fullscreen.force-fullscreen .modal-body {
+    margin-top: 60px;
+}
+
+/* ======================================
+ * 07. Preloader
+/* ====================================== */
+
+#loader {
+  background-color: #fff;
+  position: fixed;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+}
+
+#loader .icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  background-image: url(../img/preloader.gif);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+/* ======================================
+ *  08. Header
+/* ====================================== */
+
+header {
+  background-image: url(../img/1.jpg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+header h1 {
+  font-size: 40px;
+  letter-spacing: 2px;
+  margin: 0;
+  color: #fff;
+}
+
+header .cd-headline b {
+  color: #FFFFFF;
+  font-weight: 300;
+  margin: 0px;  
+}
+
+header .container {
+  display: table;
+  height: 100%;
+}
+
+header .row {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.header-overlay {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.45);
+  top: 0;
+  width: 100%;
+  left: 0;
+  height: 100%;
+}
+
+/* ======================================
+ * 09. Navigation
+/* ====================================== */
+
+#nav.affix {
+  position: fixed;
+  top: 0;
+  width: 100%
+}
+
+.navbar {
+  border: 0;  
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
+.navbar-brand {
+  padding: 5px 15px !important;
+}
+
+.navbar-default .navbar-brand {
+  color: #111111;
+}
+
+.navbar-default {
+  font-weight: 400;  
+  padding: 0 0;  
+  border-bottom: 1px solid #E7E7E7;
+  background-color: #F7F7F7;
+}
+
+.navbar-default .nav li a {
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  color: #8E8B8B;
+  transition: all 0.2s ease-in;
+}
+
+.navbar-default .navbar-nav > li > a:focus, 
+.navbar-default .navbar-nav > li > a:hover {
+  color: #8E8B8B;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > li > a:hover  {
+  color: #111111;
+  background-color: transparent;
+  outline-style: none;  
+}
+
+.navbar-default .navbar-nav> .active> a:hover,
+.navbar-default .navbar-nav> .active> a:focus {
+  color: #111111;
+  background-color: transparent;
+}
+
+/* ======================================
+ * 10. Navbar Toggle
+/* ====================================== */
+
+.navbar-default .navbar-collapse {
+  border-color: transparent;
+}
+
+.navbar-default .navbar-toggle {
+  background-color: transparent;
+  border-radius: 0;
+  border: none;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #111111;
+}
+
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+  background-color: transparent;
+}
+
+/* ======================================
+ *  11. About
+/* ====================================== */
+
+#about {
+  padding: 80px 0px 0px 0px;
+}
+
+.number {
+  color: #cccccc;
+  font-family: 'Poppins', arial, sans-serif;
+  font-size: 35px;
+  font-weight: 400;
+  margin-right: 10px;
+}
+
+/* ======================================
+ *  12. Introduction
+/* ====================================== */
+
+#introduction {
+  padding: 40px 0px 40px 0px;
+  border-bottom: 1px solid #F1EBEB;
+}
+
+.profile img {
+  margin: 20px 0px;
+  width: 450px;
+}
+
+.download-cv a {
+  background-color: #111111;
+  border-radius: 1px;
+  color: #ffffff !important;
+  display: inline-block;
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin: 14px 0;
+  padding: 10px 30px;
+  transition: all 0.3s ease;
+}
+
+.download-cv a:hover, 
+.download-cv a:focus {
+  background-color: #383535;
+}
+
+.info {
+  padding: 0px 0px 0px 15px;
+}
+
+.info li {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* ======================================
+ *  13. Skills
+/* ====================================== */
+
+#skills {
+  padding: 80px 0px 0px 0px;
+}
+
+#skills h3 {
+  font-family: 'Source Sans Pro', arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: .6px;  
+}
+
+.progress {
+  height: 3px;
+  border-radius: 4px;
+}
+
+.progress-bar {
+  background-color: #141414;
+}
+
+/* ======================================
+ *  14. Strategy
+/* ====================================== */
+
+#strategy {
+  padding: 40px 0px 40px 0px;
+}
+
+/* ======================================
+ *  15. Quotes
+/* ====================================== */
+
+#quotes {
+  background-image: url(../img/2.jpg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+  padding: 60px 0px;
+  position: relative;
+}
+
+#quotes h2 {
+  font-family: 'Poppins', arial, sans-serif;
+  font-weight: 300;
+  font-size: 30px;
+  margin: 0px;
+  padding: 15px 0px;
+  color: #FFFFFF;
+  letter-spacing: 3px;
+}
+
+.quotes-overlay {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.25);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ======================================
+ *  16. Portfolio
+/* ====================================== */
+
+#portfolio {
+  padding: 80px 0px 40px 0px;
+  border-bottom: 1px solid #F1EBEB;  
+}
+
+.portfolio-wrap .mix {
+  display: none;
+  margin-bottom: 20px;
+}
+
+.item-filter {
+  margin-bottom: 40px;
+}
+
+.item-filter ul li {
+  border: 1px solid #E8E8E8;
+  color: #5A5252;
+  cursor: pointer;
+  padding: 5px 10px;
+  letter-spacing: 1px;
+}
+
+.item-filter ul li.active {
+  border: 1px solid #111111;
+  background-color: #111111;
+  color: #FFFFFF;
+}
+
+.img-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
+.img-overlay {
+  background-color: rgba(255, 255, 255, 0.6);
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  transition: all 0.3s ease 0s;
+  width: 100%;
+}
+
+.img-wrap:hover .img-overlay {
+  opacity: 1;
+}
+
+.clients {
+  font-size: 20px;
+  letter-spacing: 2px;
+  font-family: 'Lato', arial, sans-serif;
+  font-style: italic;
+  font-weight: 400;
+  margin-top: 20px;  
+}
+
+/* ======================================
+ *  17. Milestone
+/* ====================================== */
+
+#milestone {
+  padding: 40px 0px;
+}
+
+#milestone h2 {
+  font-size: 30px;
+  color: #111111;
+}
+
+#milestone h3 {
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+/* ======================================
+ *  18. Experience
+/* ====================================== */
+
+#experience {
+  padding: 80px 0px 0px 0px;
+  border-top: 1px solid #F1EBEB;     
+}
+
+.experience {
+  color: #111111;
+  font-size: 17px;
+  margin-right: 15px;
+}
+
+#experience p {
+  padding-bottom: 40px;
+}
+
+.year {
+  background-color: #111;
+  border-radius: 1px;
+  color: #fff;
+  font-family: "Source Sans Pro",Arial,sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+}
+
+/* ======================================
+ *  19. Education
+/* ====================================== */
+
+#education {
+  padding: 0px 0px 40px 0px;
+}
+
+#education h4 {
+  color: #888888;
+}
+
+.border-style {
+  position: relative;
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+.border-style:after {
+  background-color: #E2E1E1;
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: 80px;
+  top: 50%;
+  margin-left: 20px;
+}
+
+/* ======================================
+ *  20. Call to action
+/* ====================================== */
+
+#cta {
+  background-attachment: fixed;
+  background-image: url("../img/2.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 40px 0px;
+  margin-top: 40px;
+  position: relative;
+}
+
+.cta-overlay {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.15);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#cta h2 {
+  font-family: 'Poppins', arial, sans-serif;
+  font-weight: 300;
+  font-size: 25px;
+  margin: 0px;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+}
+
+#cta h3 {
+  color: #FFFFFF;
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: 3px;
+}
+
+.pulse2 {
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-name: flash;
+  animation-timing-function: linear;
+}
+
+/* ======================================
+ *  21. Reviews
+/* ====================================== */
+
+#reviews {
+  padding: 80px 0px 0px 0px;
+}
+
+#reviews p {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F1EBEB;
+}
+
+#reviews img {
+  border-radius: 1px;
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+.owl-buttons {
+  position: absolute;
+  top: -55px;
+  right: 10px;  
+}
+
+.owl-theme .owl-controls .owl-buttons div {
+  background-color: #111111 !important;
+  color: #FFFFFF !important;
+  margin: 3px !important;
+  padding: 3px 5px !important;
+  border-radius: 2px !important;
+  opacity: 1 !important;
+}
+
+/* ======================================
+ *  22. Brands
+/* ====================================== */
+
+#brands {
+  padding: 0px 0px 40px 0px;
+  border-bottom: 1px solid #F1EBEB;  
+}
+
+/* ======================================
+ *  23. Blog
+/* ====================================== */
+
+#blog {
+  padding: 80px 0px 40px 0px;
+  border-bottom: 1px solid #F1EBEB;  
+}
+
+.blog-img-overlay {
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.blog-img-overlay img {
+  transition: all 0.5s ease;
+}
+
+.blog-img-overlay img:hover {
+  transform: scale(1.15);
+}
+
+.blog-info {
+  margin-top: 20px;
+}
+
+.blog-icon {
+  color: #111111;
+  font-size: 17px;
+  margin-right: 10px;
+}
+
+.date {
+  font-size: 13px;
+  font-weight: 400;
+  color: #111111;
+  letter-spacing: 1px;
+}
+
+#blog a {
+  color: #111111;
+  text-decoration: none;  
+  letter-spacing: 1px;
+}
+
+#blog a:hover {
+  text-decoration: underline;
+}
+
+/* ======================================
+ *  24. Contact
+/* ====================================== */
+
+#contact {
+  padding: 80px 0px;
+}
+
+#contact p {
+  letter-spacing: 1px;
+}
+
+.form-control {
+  font-family: 'Source Sans Pro', Arial, sans-serif;
+  font-size: 13px;
+  height: 30px;
+  border-radius: 0px;
+  box-shadow: none;
+  border: 2px solid #E6E6E6;
+}
+
+.form-control:focus {
+  border: 2px solid #C8C8C8;
+  box-shadow: none;
+}
+
+input {
+  color: #000;
+  background-color: #FFF;
+  border: none;
+  border-radius: 2px;
+  height: 48px;
+  margin-bottom: 15px;
+}
+
+input:focus {
+  box-shadow: none;
+}
+
+.send-success, .send-error {
+  display: none;
+}
+
+/* ======================================
+ *  25. Footer
+/* ====================================== */
+
+footer {
+  border-top: 1px solid #E7E7E7;
+  padding: 30px 0px 20px 0px;
+  background-color: #F7F7F7;
+}
+
+.social-icon a {
+  font-size: 25px;
+  color: #CACACA;
+  padding: 0px 10px;
+  transition: all 0.3s ease;
+}
+
+.social-icon a:hover,
+.social-icon a:focus {
+  color: #141414;
+}
+
+/* ======================================
+ * 26. Scroll Top
+/* ====================================== */
+
+.scroll-top {
+  position: fixed;
+  display: none;
+  z-index: 999;
+  bottom: 20px;
+  right: 20px;
+}
+
+.scroll-top a {
+  display: block;
+  font-size: 15px;
+  text-align: center;
+  background-color: #111111;
+  color: #FFFFFF;
+  border-radius: 2px;
+  padding: 5px 7px;
+}
+
+/* ======================================
+ *  27. Media queries
+/* ====================================== */
+
+@media only screen and (min-width: 320px) {
+
+  header h1 {
+    font-size: 30px;
+  }
+
+  header h2 {
+    font-size: 12px;
+  }
+
+  #quotes h2 {
+    font-size: 18px;
+  }
+
+  #cta h2 {
+    font-size: 17px;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+
+  header h1 {
+    font-size: 40px;
+  }
+
+  header h2 {
+    font-size: 25px;
+  }
+
+  #quotes h2 {
+    font-size: 30px;
+  }
+
+  #cta h2 {
+    font-size: 25px;
+  }  
+
+}

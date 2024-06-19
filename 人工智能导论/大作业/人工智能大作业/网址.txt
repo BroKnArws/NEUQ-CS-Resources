@@ -1,7 +1,0 @@
-
-WEB应用：
-http://112.124.21.96:8000/fruit/
-如果打不开请务必多刷新几次
-
-数据集：
-https://www.kaggle.com/moltean/fruits
